@@ -129,9 +129,21 @@ export const generatePDF = async (data, title = "Screenshot Report") => {
               `Image #${idx + 1}`,
               `${img.renderedWidth}px × ${img.renderedHeight}px`,
               `${img.naturalWidth}px × ${img.naturalHeight}px`,
-              `${img.aspectRatio}`,
+              `${
+                typeof img.aspectRatio === "number"
+                  ? img.aspectRatio.toFixed(2)
+                  : "Unknown"
+              }`,
               isStretched
-                ? `⚠️ Stretched (W: ${img.widthScaling}, H: ${img.heightScaling})`
+                ? `⚠️ Stretched (W: ${
+                    typeof img.widthScaling === "string"
+                      ? img.widthScaling
+                      : "Unknown"
+                  }, H: ${
+                    typeof img.heightScaling === "string"
+                      ? img.heightScaling
+                      : "Unknown"
+                  })`
                 : "OK",
             ];
           });

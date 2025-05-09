@@ -1,16 +1,14 @@
 "use client";
 
 import DashboardHeader from "../../components/DashboardHeader";
-import Protected from "../../components/Protected";
 
 export default function About() {
   return (
-    <Protected>
-      <main>
-        <DashboardHeader
-          title="About GoShotBroad"
-          subtitle="Learn more about the tool and its features"
-        />
+    <main>
+      <DashboardHeader
+        title="About GoShotBroad"
+        subtitle="Learn more about the tool and its features"
+      />
 
       <div className="dashboard-card p-6 mb-8">
         <h1 className="text-2xl font-bold text-dark-800 mb-4">

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   FiHome,
   FiImage,
@@ -16,6 +17,7 @@ import {
   FiUser,
 } from "react-icons/fi";
 import { useAuth } from "../utils/authContext";
+import { getProfileImageUrl, profileImageLoader } from "../utils/profileImage";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -61,6 +63,16 @@ export default function Sidebar() {
     return pathname === path;
   };
 
+  // Extract name from email: "john.doe@goabroad.com" -> "John Doe"
+  const getUserName = (email) => {
+    if (!email) return "User";
+    const namePart = email.split("@")[0];
+    return namePart
+      .split(".")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+  };
+
   return (
     <>
       {/* Mobile menu button */}
@@ -96,12 +108,24 @@ export default function Sidebar() {
           <div className="flex items-center justify-between px-4 h-16 border-b border-dark-100">
             <Link href="/" className="flex items-center">
               {!isSidebarCollapsed && (
-                <span className="text-xl font-bold text-primary-700">
-                  GoShotBroad
-                </span>
+                <div className="flex items-center">
+                  <Image
+                    src="/logo.png"
+                    alt="GoShotBroad Logo"
+                    width={96}
+                    height={32}
+                    className="h-8 w-auto"
+                  />
+                </div>
               )}
               {isSidebarCollapsed && (
-                <span className="text-xl font-bold text-primary-700">SP</span>
+                <Image
+                  src="/logo.png"
+                  alt="GoShotBroad Logo"
+                  width={96}
+                  height={32}
+                  className="h-8 w-auto"
+                />
               )}
             </Link>
 
@@ -150,13 +174,20 @@ export default function Sidebar() {
           <div className="p-4 border-t border-dark-100">
             {user && (
               <div className="mb-4 flex items-center">
-                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 mr-2">
-                  <FiUser className="h-4 w-4" />
+                <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
+                  <Image
+                    src={getProfileImageUrl(user, 32)}
+                    alt={getUserName(user.email)}
+                    width={32}
+                    height={32}
+                    loader={profileImageLoader}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 {!isSidebarCollapsed && (
                   <div className="overflow-hidden">
                     <div className="text-sm font-medium text-dark-800 truncate">
-                      {user.email}
+                      {getUserName(user.email)}
                     </div>
                     <div className="text-xs text-dark-500">
                       GoAbroad Employee
@@ -178,9 +209,13 @@ export default function Sidebar() {
               )}
 
               <div className="flex items-center p-2">
-                <FiSettings className="h-5 w-5 text-dark-500" />
                 {!isSidebarCollapsed && (
-                  <span className="ml-3 text-dark-600">© 2025 GoShotBroad</span>
+                  <span className="ml-3 text-dark-600">
+                    © 2025{" "}
+                    <span className="font-semibold text-primary-700">
+                      GoShotBroad
+                    </span>
+                  </span>
                 )}
               </div>
             </div>

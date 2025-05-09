@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { useAuth } from "../utils/authContext";
+import { getProfileImageUrl, profileImageLoader } from "../utils/profileImage";
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -12,6 +14,16 @@ export default function Header() {
   const handleLogout = async () => {
     await logout();
     router.push("/login");
+  };
+
+  // Extract name from email: "john.doe@goabroad.com" -> "John Doe"
+  const getUserName = (email) => {
+    if (!email) return "User";
+    const namePart = email.split("@")[0];
+    return namePart
+      .split(".")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
   };
 
   return (
@@ -50,10 +62,33 @@ export default function Header() {
           {user && (
             <div className="flex items-center">
               <div className="mr-4 hidden md:flex items-center">
-                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 mr-2">
-                  <FiUser className="h-4 w-4" />
+                <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
+                  {user ? (
+                    <Image
+                      src={getProfileImageUrl(user, 32)}
+                      alt={getUserName(user.email)}
+                      width={32}
+                      height={32}
+                      loader={profileImageLoader}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-primary-100 flex items-center justify-center text-primary-700">
+                      <FiUser className="h-4 w-4" />
+                    </div>
+                  )}
                 </div>
-                <div className="text-sm text-gray-700">{user.email}</div>
+                <div>
+                  <div className="text-sm font-medium text-gray-800">
+                    {getUserName(user.email)}
+                  </div>
+                  <div
+                    className="text-xs text-gray-500 max-w-[180px] truncate"
+                    title={user.email}
+                  >
+                    {user.email}
+                  </div>
+                </div>
               </div>
               <button
                 onClick={handleLogout}

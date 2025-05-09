@@ -849,7 +849,10 @@ export default function GeneralScreenshots() {
                               <p className="text-dark-500 text-xs">
                                 Natural: {img.naturalWidth}px ×{" "}
                                 {img.naturalHeight}px (Aspect ratio:{" "}
-                                {img.aspectRatio})
+                                {typeof img.aspectRatio === "number"
+                                  ? img.aspectRatio.toFixed(2)
+                                  : "Unknown"}
+                                )
                               </p>
                               {(img.renderedWidth > img.naturalWidth ||
                                 img.renderedHeight > img.naturalHeight) && (
@@ -876,8 +879,15 @@ export default function GeneralScreenshots() {
                                     ></line>
                                   </svg>
                                   Warning: Image is stretched beyond its natural
-                                  size (Width: {img.widthScaling}, Height:{" "}
-                                  {img.heightScaling})
+                                  size (Width:{" "}
+                                  {typeof img.widthScaling === "string"
+                                    ? img.widthScaling
+                                    : "Unknown"}
+                                  , Height:{" "}
+                                  {typeof img.heightScaling === "string"
+                                    ? img.heightScaling
+                                    : "Unknown"}
+                                  )
                                 </p>
                               )}
                             </div>
