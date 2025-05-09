@@ -1,0 +1,675 @@
+"use client";
+
+import { useState } from "react";
+import Header from "../../components/Header";
+import Tabs from "../../components/Tabs";
+import LoadingSpinner from "../../components/LoadingSpinner";
+import SelectorTester from "../../components/SelectorTester";
+import { takeScreenshots, batchScreenshots } from "../../utils/api";
+import { saveConfiguration, loadConfiguration } from "../../utils/storage";
+
+export default function GeneralScreenshots() {
+  const [activeTab, setActiveTab] = useState("single");
+  const [url, setUrl] = useState("");
+  const [selectors, setSelectors] = useState({});
+  const [selectorCount, setSelectorCount] = useState(1);
+  const [viewportWidth, setViewportWidth] = useState(1280);
+  const [viewportHeight, setViewportHeight] = useState(800);
+  const [waitTime, setWaitTime] = useState(1000);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [screenshots, setScreenshots] = useState([]);
+  const [showTester, setShowTester] = useState(false);
+
+  // Batch mode states
+  const [urls, setUrls] = useState([""]);
+  const [batchSelectors, setBatchSelectors] = useState([""]);
+
+  // Add a selector input field
+  const handleAddSelector = () => {
+    setSelectorCount((prev) => prev + 1);
+  };
+
+  // Remove a selector input field
+  const handleRemoveSelector = (index) => {
+    const updatedSelectors = { ...selectors };
+    delete updatedSelectors[`selector-${index}`];
+    setSelectors(updatedSelectors);
+  };
+
+  // Update selector value
+  const handleSelectorChange = (index, value) => {
+    setSelectors((prev) => ({
+      ...prev,
+      [`selector-${index}`]: value,
+    }));
+  };
+
+  // Add a URL input field for batch mode
+  const handleAddUrl = () => {
+    setUrls((prev) => [...prev, ""]);
+  };
+
+  // Update URL in batch mode
+  const handleBatchUrlChange = (index, value) => {
+    const updatedUrls = [...urls];
+    updatedUrls[index] = value;
+    setUrls(updatedUrls);
+  };
+
+  // Remove a URL from batch mode
+  const handleRemoveUrl = (index) => {
+    const updatedUrls = [...urls];
+    updatedUrls.splice(index, 1);
+    setUrls(updatedUrls);
+  };
+
+  // Add a selector input field for batch mode
+  const handleAddBatchSelector = () => {
+    setBatchSelectors((prev) => [...prev, ""]);
+  };
+
+  // Update selector in batch mode
+  const handleBatchSelectorChange = (index, value) => {
+    const updatedSelectors = [...batchSelectors];
+    updatedSelectors[index] = value;
+    setBatchSelectors(updatedSelectors);
+  };
+
+  // Remove a selector from batch mode
+  const handleRemoveBatchSelector = (index) => {
+    const updatedSelectors = [...batchSelectors];
+    updatedSelectors.splice(index, 1);
+    setBatchSelectors(updatedSelectors);
+  };
+
+  // Capture screenshots in single URL mode
+  const handleCaptureScreenshots = async (e) => {
+    e.preventDefault();
+
+    if (!url) {
+      setError("Please enter a URL");
+      return;
+    }
+
+    const selectorList = Object.values(selectors).filter(Boolean);
+
+    if (selectorList.length === 0) {
+      setError("Please enter at least one CSS selector");
+      return;
+    }
+
+    setError(null);
+    setIsLoading(true);
+    setScreenshots([]);
+
+    try {
+      const data = await takeScreenshots({
+        url,
+        selectors: selectorList,
+        viewport: { width: viewportWidth, height: viewportHeight },
+        waitTime,
+      });
+
+      if (data.screenshots) {
+        setScreenshots(data.screenshots);
+      }
+    } catch (error) {
+      console.error("Error taking screenshots:", error);
+      setError(error.message || "Failed to take screenshots");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Capture screenshots in batch mode
+  const handleBatchScreenshots = async (e) => {
+    e.preventDefault();
+
+    const validUrls = urls.filter(Boolean);
+    const validSelectors = batchSelectors.filter(Boolean);
+
+    if (validUrls.length === 0) {
+      setError("Please enter at least one URL");
+      return;
+    }
+
+    if (validSelectors.length === 0) {
+      setError("Please enter at least one CSS selector");
+      return;
+    }
+
+    setError(null);
+    setIsLoading(true);
+    setScreenshots([]);
+
+    try {
+      const data = await batchScreenshots({
+        urls: validUrls,
+        selectors: validSelectors,
+        viewport: { width: viewportWidth, height: viewportHeight },
+        waitTime,
+      });
+
+      if (data.batchResults) {
+        // Flatten the batch results into a single array of screenshots
+        const allScreenshots = [];
+        data.batchResults.forEach((result) => {
+          if (result.screenshots) {
+            result.screenshots.forEach((screenshot) => {
+              allScreenshots.push({
+                ...screenshot,
+                url: result.url,
+              });
+            });
+          }
+        });
+
+        setScreenshots(allScreenshots);
+      }
+    } catch (error) {
+      console.error("Error taking batch screenshots:", error);
+      setError(error.message || "Failed to take batch screenshots");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Save the current configuration
+  const handleSaveConfig = () => {
+    const config = {
+      activeTab,
+      url,
+      selectors,
+      selectorCount,
+      viewportWidth,
+      viewportHeight,
+      waitTime,
+      urls,
+      batchSelectors,
+    };
+
+    const saved = saveConfiguration("generalScreenshotsConfig", config);
+    if (saved) {
+      alert("Configuration saved successfully!");
+    } else {
+      alert("Failed to save configuration");
+    }
+  };
+
+  // Load saved configuration
+  const handleLoadConfig = () => {
+    const config = loadConfiguration("generalScreenshotsConfig");
+    if (config) {
+      setActiveTab(config.activeTab || "single");
+      setUrl(config.url || "");
+      setSelectors(config.selectors || {});
+      setSelectorCount(config.selectorCount || 1);
+      setViewportWidth(config.viewportWidth || 1280);
+      setViewportHeight(config.viewportHeight || 800);
+      setWaitTime(config.waitTime || 1000);
+      setUrls(config.urls || [""]);
+      setBatchSelectors(config.batchSelectors || [""]);
+    } else {
+      alert("No saved configuration found");
+    }
+  };
+
+  // Render the form for single URL mode
+  const renderSingleForm = () => (
+    <form onSubmit={handleCaptureScreenshots} className="space-y-6">
+      <div>
+        <label
+          htmlFor="website-url"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Website URL
+        </label>
+        <input
+          id="website-url"
+          type="url"
+          placeholder="https://example.com"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          className="form-input"
+          required
+        />
+      </div>
+
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="block text-sm font-medium text-gray-700">
+            CSS Selectors
+          </label>
+          <button
+            type="button"
+            className="text-sm text-blue-600 hover:text-blue-800"
+            onClick={handleAddSelector}
+          >
+            + Add Selector
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {Array.from({ length: selectorCount }, (_, index) => (
+            <div key={index} className="flex gap-2">
+              <input
+                type="text"
+                placeholder={`CSS selector ${index + 1}`}
+                value={selectors[`selector-${index}`] || ""}
+                onChange={(e) => handleSelectorChange(index, e.target.value)}
+                className="form-input"
+              />
+              <button
+                type="button"
+                className="px-2 text-gray-500 hover:text-red-500"
+                onClick={() => handleRemoveSelector(index)}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label
+            htmlFor="viewport-width"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Viewport Width (px)
+          </label>
+          <input
+            id="viewport-width"
+            type="number"
+            min="320"
+            value={viewportWidth}
+            onChange={(e) => setViewportWidth(Number(e.target.value))}
+            className="form-input"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="viewport-height"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Viewport Height (px)
+          </label>
+          <input
+            id="viewport-height"
+            type="number"
+            min="320"
+            value={viewportHeight}
+            onChange={(e) => setViewportHeight(Number(e.target.value))}
+            className="form-input"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="wait-time"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Wait Time (ms)
+          </label>
+          <input
+            id="wait-time"
+            type="number"
+            min="0"
+            step="100"
+            value={waitTime}
+            onChange={(e) => setWaitTime(Number(e.target.value))}
+            className="form-input"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+          {isLoading ? "Capturing Screenshots..." : "Capture Screenshots"}
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={() => setShowTester(true)}
+        >
+          Test Selectors
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleSaveConfig}
+        >
+          Save Configuration
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleLoadConfig}
+        >
+          Load Configuration
+        </button>
+      </div>
+    </form>
+  );
+
+  // Render the form for batch mode
+  const renderBatchForm = () => (
+    <form onSubmit={handleBatchScreenshots} className="space-y-6">
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Website URLs
+          </label>
+          <button
+            type="button"
+            className="text-sm text-blue-600 hover:text-blue-800"
+            onClick={handleAddUrl}
+          >
+            + Add URL
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {urls.map((url, index) => (
+            <div key={index} className="flex gap-2">
+              <input
+                type="url"
+                placeholder="https://example.com"
+                value={url}
+                onChange={(e) => handleBatchUrlChange(index, e.target.value)}
+                className="form-input"
+              />
+              {urls.length > 1 && (
+                <button
+                  type="button"
+                  className="px-2 text-gray-500 hover:text-red-500"
+                  onClick={() => handleRemoveUrl(index)}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="block text-sm font-medium text-gray-700">
+            CSS Selectors
+          </label>
+          <button
+            type="button"
+            className="text-sm text-blue-600 hover:text-blue-800"
+            onClick={handleAddBatchSelector}
+          >
+            + Add Selector
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {batchSelectors.map((selector, index) => (
+            <div key={index} className="flex gap-2">
+              <input
+                type="text"
+                placeholder={`CSS selector ${index + 1}`}
+                value={selector}
+                onChange={(e) =>
+                  handleBatchSelectorChange(index, e.target.value)
+                }
+                className="form-input"
+              />
+              {batchSelectors.length > 1 && (
+                <button
+                  type="button"
+                  className="px-2 text-gray-500 hover:text-red-500"
+                  onClick={() => handleRemoveBatchSelector(index)}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label
+            htmlFor="batch-viewport-width"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Viewport Width (px)
+          </label>
+          <input
+            id="batch-viewport-width"
+            type="number"
+            min="320"
+            value={viewportWidth}
+            onChange={(e) => setViewportWidth(Number(e.target.value))}
+            className="form-input"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="batch-viewport-height"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Viewport Height (px)
+          </label>
+          <input
+            id="batch-viewport-height"
+            type="number"
+            min="320"
+            value={viewportHeight}
+            onChange={(e) => setViewportHeight(Number(e.target.value))}
+            className="form-input"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="batch-wait-time"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Wait Time (ms)
+          </label>
+          <input
+            id="batch-wait-time"
+            type="number"
+            min="0"
+            step="100"
+            value={waitTime}
+            onChange={(e) => setWaitTime(Number(e.target.value))}
+            className="form-input"
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+          {isLoading ? "Processing Batch..." : "Process Batch"}
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleSaveConfig}
+        >
+          Save Configuration
+        </button>
+
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={handleLoadConfig}
+        >
+          Load Configuration
+        </button>
+      </div>
+    </form>
+  );
+
+  // Render the screenshot results
+  const renderScreenshots = () => {
+    if (screenshots.length === 0) return null;
+
+    return (
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">
+          Screenshot Results
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {screenshots.map((screenshot, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200"
+            >
+              {screenshot.error ? (
+                <div className="p-4">
+                  <div className="text-sm font-medium mb-2">
+                    Error: {screenshot.selector}
+                  </div>
+                  <p className="text-red-600 text-sm">{screenshot.error}</p>
+                </div>
+              ) : (
+                <>
+                  <div className="aspect-video relative overflow-hidden bg-gray-100">
+                    <img
+                      src={screenshot.path}
+                      alt={`Screenshot of ${screenshot.selector}`}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="text-sm font-medium">
+                        {screenshot.selector}
+                      </div>
+                    </div>
+                    {screenshot.url && (
+                      <p className="text-xs text-gray-500 mb-2 break-all">
+                        {screenshot.url}
+                      </p>
+                    )}
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="text-sm text-gray-500">
+                        Element: {Math.round(screenshot.width)}px ×{" "}
+                        {Math.round(screenshot.height)}px
+                      </p>
+                      <a
+                        href={screenshot.path}
+                        download={`screenshot_${index}_${Date.now()}.png`}
+                        className="text-xs text-blue-600 hover:text-blue-800"
+                      >
+                        Download
+                      </a>
+                    </div>
+
+                    {screenshot.images && screenshot.images.length > 0 && (
+                      <div className="mt-2 border-t pt-2">
+                        <p className="text-xs font-semibold text-gray-700 mb-1">
+                          Images found:
+                        </p>
+                        <div className="space-y-1">
+                          {screenshot.images.map((img, idx) => (
+                            <div key={idx} className="text-xs text-gray-600">
+                              <p>
+                                Image #{idx + 1}: {img.renderedWidth}px ×{" "}
+                                {img.renderedHeight}px
+                              </p>
+                              <p className="text-gray-500 text-xs">
+                                Natural: {img.naturalWidth}px ×{" "}
+                                {img.naturalHeight}px (Aspect ratio:{" "}
+                                {img.aspectRatio})
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const tabs = [
+    { id: "single", label: "Single URL" },
+    { id: "batch", label: "Batch Mode" },
+  ];
+
+  return (
+    <main>
+      <Header />
+
+      <div className="bg-white shadow-sm rounded-lg p-6 mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          General Screenshot Tool
+        </h1>
+        <p className="text-gray-600 mb-6">
+          Capture screenshots of any elements on websites using CSS selectors.
+        </p>
+
+        <Tabs tabs={tabs} defaultTab="single" onChange={setActiveTab} />
+
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-red-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-red-700">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "single" ? renderSingleForm() : renderBatchForm()}
+      </div>
+
+      {showTester && (
+        <SelectorTester
+          url={url}
+          selectors={selectors}
+          onClose={() => setShowTester(false)}
+        />
+      )}
+
+      {isLoading ? (
+        <LoadingSpinner
+          message={
+            activeTab === "single"
+              ? "Taking screenshots..."
+              : "Processing batch..."
+          }
+        />
+      ) : (
+        renderScreenshots()
+      )}
+    </main>
+  );
+}

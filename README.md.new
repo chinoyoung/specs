@@ -36,7 +36,8 @@ To start the application:
 npm run dev
 ```
 
-This will start the Next.js app at http://localhost:3000 (or another available port if 3000 is in use)
+This will start:
+- The Next.js app at http://localhost:3000
 
 ## Usage
 
