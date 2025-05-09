@@ -213,6 +213,141 @@ export default function AdComponents() {
     }
   };
 
+  // Capture screenshots for all configured ads across all categories
+  const handleCaptureAllScreenshots = async () => {
+    // Check if there are any selectors configured
+    if (Object.keys(adSelectors).length === 0) {
+      setError("Please configure at least one ad selector first");
+      return;
+    }
+
+    // Check if we have URLs for each category or a default URL
+    const categoriesWithSelectors = new Set();
+    Object.keys(adSelectors).forEach((adId) => {
+      if (adSelectors[adId]) {
+        for (const category of AD_CATEGORIES) {
+          const adExists = category.ads.some((ad) => ad.id === adId);
+          if (adExists) {
+            categoriesWithSelectors.add(category.name);
+            break;
+          }
+        }
+      }
+    });
+
+    // Check that all categories with selectors have URLs
+    const missingUrlCategories = [];
+    categoriesWithSelectors.forEach((categoryName) => {
+      if (!categoryUrls[categoryName] && !url) {
+        missingUrlCategories.push(categoryName);
+      }
+    });
+
+    if (missingUrlCategories.length > 0) {
+      setError(
+        `Please provide URLs for these categories: ${missingUrlCategories.join(
+          ", "
+        )}`
+      );
+      return;
+    }
+
+    // Collect all configured selectors
+    const allSelectors = {};
+    Object.keys(adSelectors).forEach((adId) => {
+      if (adSelectors[adId]) {
+        const adInfo = findAdById(adId);
+        if (adInfo) {
+          // Find which category this ad belongs to
+          for (const category of AD_CATEGORIES) {
+            const adExists = category.ads.some((ad) => ad.id === adId);
+            if (adExists) {
+              allSelectors[`${adId}: ${adInfo.name}`] = {
+                selector: adSelectors[adId],
+                categoryName: category.name,
+              };
+              break;
+            }
+          }
+        }
+      }
+    });
+
+    if (Object.keys(allSelectors).length === 0) {
+      setError("No valid selectors configured");
+      return;
+    }
+
+    setError(null);
+    setIsLoading(true);
+
+    console.log(
+      `Starting batch capture of ${
+        Object.keys(allSelectors).length
+      } ad components`
+    );
+
+    try {
+      const results = {};
+      let capturedCount = 0;
+      let errorCount = 0;
+
+      // Process each ad selector one by one
+      for (const [adName, info] of Object.entries(allSelectors)) {
+        try {
+          // Determine which URL to use
+          const urlToUse = categoryUrls[info.categoryName] || url;
+
+          if (!urlToUse) {
+            results[adName] = {
+              error: `No URL provided for category: ${info.categoryName}`,
+              selector: info.selector,
+            };
+            errorCount++;
+            continue;
+          }
+
+          console.log(`Capturing ${adName} from ${urlToUse}`);
+          const data = await takeScreenshots({
+            url: urlToUse,
+            selectors: [info.selector],
+            viewport: { width: viewportWidth, height: viewportHeight },
+            waitTime,
+          });
+
+          if (data.screenshots && data.screenshots.length > 0) {
+            results[adName] = data.screenshots[0];
+            capturedCount++;
+          }
+        } catch (err) {
+          console.error(`Error capturing ${adName}:`, err);
+          results[adName] = {
+            error: err.message || "Failed to capture screenshot",
+            selector: info.selector,
+          };
+          errorCount++;
+        }
+      }
+
+      setAdScreenshots(results);
+      console.log(
+        `Batch capture complete. Captured: ${capturedCount}, Errors: ${errorCount}`
+      );
+
+      // Display a summary at the top
+      if (errorCount > 0) {
+        setError(
+          `Captured ${capturedCount} screenshots with ${errorCount} errors. See details below.`
+        );
+      }
+    } catch (error) {
+      console.error("Batch capture failed:", error);
+      setError(error.message || "Failed to capture screenshots");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Find ad information by ID
   const findAdById = (adId) => {
     for (const category of AD_CATEGORIES) {
@@ -514,6 +649,16 @@ export default function AdComponents() {
                                         {img.naturalHeight}px (Aspect ratio:{" "}
                                         {img.aspectRatio})
                                       </p>
+                                      {(img.renderedWidth > img.naturalWidth ||
+                                        img.renderedHeight >
+                                          img.naturalHeight) && (
+                                        <p className="text-orange-600 text-xs font-medium mt-1">
+                                          ⚠️ Warning: Image is stretched beyond
+                                          its natural size (Width:{" "}
+                                          {img.widthScaling}, Height:{" "}
+                                          {img.heightScaling})
+                                        </p>
+                                      )}
                                     </div>
                                   ))}
                                 </div>
@@ -707,7 +852,9 @@ export default function AdComponents() {
               className="btn btn-primary"
               disabled={isLoading}
             >
-              {isLoading ? "Capturing Screenshots..." : "Capture Screenshots"}
+              {isLoading
+                ? "Capturing Screenshots..."
+                : "Capture Selected Screenshots"}
             </button>
 
             <button
@@ -724,6 +871,42 @@ export default function AdComponents() {
               onClick={handleLoadConfig}
             >
               Load Configuration
+            </button>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center mb-3">
+              <div className="w-5 h-5 mr-2 text-blue-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-md font-medium">Batch Processing</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">
+              Capture screenshots of all configured ad components across all
+              categories at once. Make sure you've set up selectors and URLs for
+              each category you want to capture.
+            </p>
+            <button
+              type="button"
+              className="btn btn-primary w-full md:w-auto"
+              onClick={handleCaptureAllScreenshots}
+              disabled={isLoading}
+            >
+              {isLoading
+                ? "Capturing All Screenshots..."
+                : "Capture All Configured Ads"}
             </button>
           </div>
         </form>

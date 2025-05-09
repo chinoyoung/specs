@@ -150,6 +150,16 @@ export async function captureScreenshots(
             const imagesData = [];
             images.forEach((img) => {
               if (img.complete && img.naturalWidth > 0) {
+                // Calculate scaling percentages
+                const widthScaling = (
+                  (img.width / img.naturalWidth) *
+                  100
+                ).toFixed(0);
+                const heightScaling = (
+                  (img.height / img.naturalHeight) *
+                  100
+                ).toFixed(0);
+
                 imagesData.push({
                   src: img.src,
                   renderedWidth: img.width,
@@ -157,6 +167,11 @@ export async function captureScreenshots(
                   naturalWidth: img.naturalWidth,
                   naturalHeight: img.naturalHeight,
                   aspectRatio: (img.width / img.height).toFixed(2),
+                  widthScaling: `${widthScaling}%`,
+                  heightScaling: `${heightScaling}%`,
+                  isStretched:
+                    img.width > img.naturalWidth ||
+                    img.height > img.naturalHeight,
                 });
               }
             });

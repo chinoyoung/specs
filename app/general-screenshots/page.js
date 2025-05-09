@@ -590,6 +590,14 @@ export default function GeneralScreenshots() {
                                 {img.naturalHeight}px (Aspect ratio:{" "}
                                 {img.aspectRatio})
                               </p>
+                              {(img.renderedWidth > img.naturalWidth ||
+                                img.renderedHeight > img.naturalHeight) && (
+                                <p className="text-orange-600 text-xs font-medium mt-1">
+                                  ⚠️ Warning: Image is stretched beyond its
+                                  natural size (Width: {img.widthScaling},
+                                  Height: {img.heightScaling})
+                                </p>
+                              )}
                             </div>
                           ))}
                         </div>
