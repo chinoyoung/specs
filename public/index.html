@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Website Section Screenshots</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Website Section Screenshots</h1>
+
+      <div class="input-form">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="single-url">
+            Single URL
+          </button>
+          <button class="tab-btn" data-tab="multiple-urls">
+            Multiple URLs
+          </button>
+        </div>
+
+        <div class="tab-content active" id="single-url-tab">
+          <div class="form-group">
+            <label for="website-url">Website URL:</label>
+            <input
+              type="url"
+              id="website-url"
+              placeholder="https://example.com"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="tab-content" id="multiple-urls-tab">
+          <div class="form-group">
+            <label for="grouped-mode">
+              <input type="checkbox" id="grouped-mode" checked /> Use grouped
+              URL-selector pairs
+            </label>
+            <p class="form-hint">
+              When enabled, each URL will only be checked against its specific
+              selectors.
+            </p>
+          </div>
+
+          <div id="grouped-input-container">
+            <div class="url-selector-group">
+              <div class="form-group">
+                <label>URL:</label>
+                <input
+                  type="url"
+                  class="group-url"
+                  placeholder="https://example.com"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>CSS Selectors for this URL (one per line):</label>
+                <textarea
+                  class="group-selectors"
+                  rows="3"
+                  placeholder=".header-section
+#main-content"
+                  required
+                ></textarea>
+              </div>
+              <button type="button" class="btn btn-secondary remove-group">
+                Remove
+              </button>
+            </div>
+            <button type="button" id="add-group" class="btn btn-secondary">
+              + Add URL Group
+            </button>
+          </div>
+
+          <div id="batch-input-container" style="display: none">
+            <div class="form-group">
+              <label for="website-urls">Website URLs (one per line):</label>
+              <textarea
+                id="website-urls"
+                rows="5"
+                placeholder="https://example.com
+https://another-site.com
+https://third-example.org"
+                required
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="batch-css-selectors"
+                >CSS Selectors (one per line):</label
+              >
+              <textarea
+                id="batch-css-selectors"
+                rows="5"
+                placeholder=".header-section
+#main-content
+.product-list
+.footer"
+                required
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" id="single-url-selectors">
+          <label for="css-selectors">CSS Selectors (one per line):</label>
+          <textarea
+            id="css-selectors"
+            rows="5"
+            placeholder=".header-section
+#main-content
+.product-list
+.footer"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-options">
+          <details>
+            <summary>Advanced Options</summary>
+            <div class="options-group">
+              <div class="form-group form-group-inline">
+                <label for="viewport-width">Viewport Width:</label>
+                <input
+                  type="number"
+                  id="viewport-width"
+                  value="1280"
+                  min="320"
+                  max="2560"
+                />
+              </div>
+
+              <div class="form-group form-group-inline">
+                <label for="viewport-height">Viewport Height:</label>
+                <input
+                  type="number"
+                  id="viewport-height"
+                  value="800"
+                  min="320"
+                  max="2560"
+                />
+              </div>
+
+              <div class="form-group form-group-inline">
+                <label for="wait-time">Wait Time (ms):</label>
+                <input
+                  type="number"
+                  id="wait-time"
+                  value="1000"
+                  min="0"
+                  max="10000"
+                  step="500"
+                />
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="btn-group">
+          <button id="take-screenshots" class="btn">Take Screenshots</button>
+          <button id="run-batch" class="btn btn-primary">Run Batch Job</button>
+          <button id="test-selectors" class="btn btn-secondary">
+            Test Selectors
+          </button>
+          <button id="save-config" class="btn btn-secondary">
+            Save Configuration
+          </button>
+          <button id="load-config" class="btn btn-secondary">
+            Load Saved Config
+          </button>
+        </div>
+      </div>
+
+      <div class="loading-indicator" id="loading">
+        <div class="spinner"></div>
+        <p>Taking screenshots... This may take a few moments.</p>
+      </div>
+
+      <div id="error-message" class="error-message"></div>
+
+      <div class="results-container" id="results-container">
+        <div class="results-header">
+          <h2>Screenshots</h2>
+          <button
+            id="download-all"
+            class="btn btn-success"
+            style="display: none"
+          >
+            Download All
+          </button>
+        </div>
+        <div id="screenshots-grid" class="screenshots-grid"></div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>
