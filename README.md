@@ -12,6 +12,10 @@ A modern Next.js web application for capturing screenshots of specific elements 
 - **Configuration Management**: Save and load your configurations for repeated use.
 - **Responsive Design**: Optimized for both desktop and mobile devices.
 - **Download Options**: Download individual screenshots or all screenshots as a ZIP file.
+- **PDF Export**: Generate detailed PDF reports with screenshots and image analysis.
+- **Image Analysis**: Detect and warn about stretched images in your designs.
+- **White Background**: Screenshots include white backgrounds for consistent appearance.
+- **Category-Specific URLs**: Configure different URLs for each ad category.
 
 ## Getting Started
 
@@ -24,6 +28,7 @@ A modern Next.js web application for capturing screenshots of specific elements 
 
 1. Clone this repository
 2. Install dependencies:
+
 ```
 npm install
 ```
@@ -77,7 +82,7 @@ This application is built using:
 
 ```
 /
-├── app/                      # Next.js app directory 
+├── app/                      # Next.js app directory
 │   ├── api/                  # API routes for screenshots & selector testing
 │   ├── ad-components/        # Ad components page
 │   ├── general-screenshots/  # General screenshot tool

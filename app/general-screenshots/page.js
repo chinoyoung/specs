@@ -7,6 +7,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import SelectorTester from "../../components/SelectorTester";
 import { takeScreenshots, batchScreenshots } from "../../utils/api";
 import { saveConfiguration, loadConfiguration } from "../../utils/storage";
+import { generatePDF, savePDF } from "../../utils/pdfGenerator";
 
 export default function GeneralScreenshots() {
   const [activeTab, setActiveTab] = useState("single");
@@ -212,6 +213,39 @@ export default function GeneralScreenshots() {
       setBatchSelectors(config.batchSelectors || [""]);
     } else {
       alert("No saved configuration found");
+    }
+  };
+
+  // Generate and download a PDF report of screenshots
+  const handleExportToPDF = async () => {
+    if (screenshots.length === 0) {
+      alert("No screenshots to export");
+      return;
+    }
+
+    try {
+      // Format data for PDF generation
+      const screenshotData = {
+        "General Screenshots": {},
+      };
+
+      // Add each screenshot to the data
+      screenshots.forEach((screenshot, index) => {
+        const name = screenshot.selector || `Screenshot ${index + 1}`;
+        screenshotData["General Screenshots"][name] = screenshot;
+      });
+
+      // Generate the PDF
+      const doc = await generatePDF(
+        screenshotData,
+        "General Screenshots Report"
+      );
+
+      // Save the PDF
+      savePDF(doc, `general_screenshots_report_${Date.now()}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Error generating PDF: " + error.message);
     }
   };
 
@@ -523,9 +557,14 @@ export default function GeneralScreenshots() {
 
     return (
       <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">
-          Screenshot Results
-        </h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Screenshot Results
+          </h2>
+          <button onClick={handleExportToPDF} className="btn btn-primary">
+            Export to PDF
+          </button>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {screenshots.map((screenshot, index) => (
             <div
@@ -657,6 +696,16 @@ export default function GeneralScreenshots() {
         )}
 
         {activeTab === "single" ? renderSingleForm() : renderBatchForm()}
+
+        <div className="mt-6">
+          <button
+            onClick={handleExportToPDF}
+            className="btn btn-success"
+            disabled={isLoading}
+          >
+            {isLoading ? "Generating PDF..." : "Export to PDF"}
+          </button>
+        </div>
       </div>
 
       {showTester && (

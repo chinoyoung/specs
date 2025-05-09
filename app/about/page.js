@@ -35,6 +35,11 @@ export default function About() {
             <li>
               Download individual screenshots or bulk download as a zip file
             </li>
+            <li>
+              Generate detailed PDF reports with image analysis information
+            </li>
+            <li>Automatically detect stretched images and display warnings</li>
+            <li>Configure different URLs for each ad category</li>
           </ul>
 
           <h2>Technical Details</h2>

@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { takeScreenshots } from "../../utils/api";
 import { saveConfiguration, loadConfiguration } from "../../utils/storage";
+import { generatePDF, savePDF } from "../../utils/pdfGenerator";
 
 // Ad specifications from the specs.md file
 const AD_CATEGORIES = [
@@ -448,6 +449,50 @@ export default function AdComponents() {
     }
   };
 
+  // Generate and download a PDF report of screenshots
+  const handleExportToPDF = async () => {
+    if (Object.keys(adScreenshots).length === 0) {
+      alert("No screenshots to export");
+      return;
+    }
+
+    try {
+      // Group screenshots by category
+      const categorizedScreenshots = {};
+
+      for (const [adName, screenshot] of Object.entries(adScreenshots)) {
+        const adId = adName.split(":")[0].trim();
+
+        // Find which category this ad belongs to
+        for (const category of AD_CATEGORIES) {
+          const adExists = category.ads.some((ad) => ad.id === adId);
+          if (adExists) {
+            if (!categorizedScreenshots[category.name]) {
+              categorizedScreenshots[category.name] = {};
+            }
+            categorizedScreenshots[category.name][adName] = screenshot;
+            break;
+          }
+        }
+      }
+
+      // Add category URLs
+      categorizedScreenshots.categoryUrls = categoryUrls;
+
+      // Generate the PDF
+      const doc = await generatePDF(
+        categorizedScreenshots,
+        "Ad Component Screenshots Report"
+      );
+
+      // Save the PDF
+      savePDF(doc, `ad_screenshots_report_${Date.now()}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Error generating PDF: " + error.message);
+    }
+  };
+
   // Render the selected category's ad components
   const renderCategoryAds = () => {
     if (!selectedCategory) return null;
@@ -545,9 +590,14 @@ export default function AdComponents() {
           <h2 className="text-xl font-semibold text-gray-900">
             Ad Screenshots
           </h2>
-          <button onClick={handleDownloadAll} className="btn btn-secondary">
-            Download All
-          </button>
+          <div className="flex gap-2">
+            <button onClick={handleDownloadAll} className="btn btn-secondary">
+              Download All
+            </button>
+            <button onClick={handleExportToPDF} className="btn btn-primary">
+              Export to PDF
+            </button>
+          </div>
         </div>
 
         {Object.entries(categorizedScreenshots).map(
