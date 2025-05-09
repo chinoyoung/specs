@@ -1,120 +1,152 @@
 "use client";
 
-import { useState } from "react";
-import Header from "../components/Header";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import DashboardHeader from "../components/DashboardHeader";
+import Protected from "../components/Protected";
+import {
+  FiCamera,
+  FiLayers,
+  FiImage,
+  FiDownload,
+  FiTrendingUp,
+  FiCalendar,
+  FiFile,
+  FiArrowUp,
+  FiArrowDown,
+} from "react-icons/fi";
 
 export default function Home() {
+  const [stats, setStats] = useState({
+    totalScreenshots: 0,
+    adComponents: 0,
+    generalScreenshots: 0,
+    lastCaptured: null,
+  });
+
+  // Simulate loading stats (in a real app, this would be an API call)
+  useEffect(() => {
+    // Mock data
+    setStats({
+      totalScreenshots: 142,
+      adComponents: 98,
+      generalScreenshots: 44,
+      lastCaptured: new Date().toLocaleDateString(),
+    });
+  }, []);
+
   return (
-    <main>
-      <Header />
+    <Protected>
+      <main>
+        <DashboardHeader
+          title="Dashboard"
+          subtitle="Welcome to GoShotBroad, your advanced screenshot management tool"
+        />
 
-      <div className="bg-white shadow-sm rounded-lg p-6 mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          Welcome to the Screenshot Tool
-        </h1>
-        <p className="text-gray-600 mb-8">
-          A modern tool for capturing and documenting UI elements from websites
-          using CSS selectors.
-        </p>
+        {/* Quick Actions */}
+        <h2 className="text-xl font-bold text-dark-800 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Link
+            href="/ad-components"
+            className="dashboard-card p-6 flex items-start"
+          >
+            <div className="rounded-full bg-primary-100 p-3 mr-4">
+              <FiLayers className="h-6 w-6 text-primary-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-dark-800 mb-1">
+                Capture Ad Components
+              </h3>
+              <p className="text-dark-500 text-sm">
+                Take screenshots of advertising components organized by category
+              </p>
+            </div>
+          </Link>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              Ad Components
-            </h2>
-            <p className="text-gray-600 mb-4">
-              Take screenshots of advertising components organized by categories
-              defined in specifications.
-            </p>
-            <Link
-              href="/ad-components"
-              className="inline-flex items-center text-blue-600 hover:text-blue-800"
-            >
-              Go to Ad Components
-              <svg
-                className="ml-1 w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Link>
+          <Link
+            href="/general-screenshots"
+            className="dashboard-card p-6 flex items-start"
+          >
+            <div className="rounded-full bg-secondary-100 p-3 mr-4">
+              <FiImage className="h-6 w-6 text-secondary-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-dark-800 mb-1">
+                General Screenshots
+              </h3>
+              <p className="text-dark-500 text-sm">
+                Capture screenshots using custom CSS selectors
+              </p>
+            </div>
+          </Link>
+
+          <Link href="/about" className="dashboard-card p-6 flex items-start">
+            <div className="rounded-full bg-dark-100 p-3 mr-4">
+              <FiFile className="h-6 w-6 text-dark-600" />
+            </div>
+            <div>
+              <h3 className="font-medium text-dark-800 mb-1">Documentation</h3>
+              <p className="text-dark-500 text-sm">
+                Learn more about using the screenshot tool
+              </p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Recent Screenshots */}
+        <h2 className="text-xl font-bold text-dark-800 mb-4">
+          Recent Screenshots
+        </h2>
+        <div className="dashboard-card overflow-hidden">
+          <div className="table-container">
+            <table className="table">
+              <thead className="table-header">
+                <tr>
+                  <th className="table-header-cell">Name</th>
+                  <th className="table-header-cell">Type</th>
+                  <th className="table-header-cell">URL</th>
+                  <th className="table-header-cell">Date</th>
+                  <th className="table-header-cell">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-dark-200">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <tr key={i} className="table-row">
+                    <td className="table-cell font-medium">Screenshot {i}</td>
+                    <td className="table-cell">
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          i % 2 === 0
+                            ? "bg-primary-100 text-primary-800"
+                            : "bg-secondary-100 text-secondary-800"
+                        }`}
+                      >
+                        {i % 2 === 0 ? "Ad Component" : "General"}
+                      </span>
+                    </td>
+                    <td className="table-cell text-dark-500 truncate max-w-xs">
+                      https://example.com/page-{i}
+                    </td>
+                    <td className="table-cell text-dark-500">
+                      {new Date(Date.now() - i * 86400000).toLocaleDateString()}
+                    </td>
+                    <td className="table-cell">
+                      <div className="flex items-center space-x-2">
+                        <button className="p-1 rounded-md text-primary-600 hover:bg-primary-50">
+                          <FiDownload className="h-4 w-4" />
+                        </button>
+                        <button className="p-1 rounded-md text-dark-600 hover:bg-dark-50">
+                          <FiImage className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-
-          <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              General Screenshots
-            </h2>
-            <p className="text-gray-600 mb-4">
-              Capture screenshots of any elements on websites using custom CSS
-              selectors. Supports batch processing of multiple URLs.
-            </p>
-            <Link
-              href="/general-screenshots"
-              className="inline-flex items-center text-blue-600 hover:text-blue-800"
-            >
-              Go to General Screenshots
-              <svg
-                className="ml-1 w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Link>
-          </div>
         </div>
-
-        <div className="mt-8 mb-4">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            Getting Started
-          </h2>
-
-          <ol className="list-decimal ml-5 space-y-3 text-gray-600">
-            <li>
-              <strong>Choose a Tool:</strong> Select either Ad Components for
-              specialized ad screenshots, or General Screenshots for any website
-              elements.
-            </li>
-            <li>
-              <strong>Enter URL:</strong> Provide the URL of the website you
-              want to capture.
-            </li>
-            <li>
-              <strong>Specify Selectors:</strong> Enter CSS selectors to target
-              specific elements on the page.
-            </li>
-            <li>
-              <strong>Configure Options:</strong> Adjust viewport dimensions and
-              wait time as needed.
-            </li>
-            <li>
-              <strong>Capture Screenshots:</strong> Click the capture button and
-              view your screenshots!
-            </li>
-          </ol>
-        </div>
-
-        <div className="mt-8 bg-blue-50 p-4 rounded-lg">
-          <h3 className="text-md font-medium text-blue-800 mb-2">Pro Tip</h3>
-          <p className="text-blue-700 text-sm">
-            Use the selector testing feature to verify your CSS selectors before
-            taking screenshots. This helps ensure you're capturing the right
-            elements.
-          </p>
-        </div>
-      </div>
-    </main>
+      </main>
+    </Protected>
   );
 }

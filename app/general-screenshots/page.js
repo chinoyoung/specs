@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Header from "../../components/Header";
+import DashboardHeader from "../../components/DashboardHeader";
 import Tabs from "../../components/Tabs";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import SelectorTester from "../../components/SelectorTester";
@@ -255,32 +255,68 @@ export default function GeneralScreenshots() {
       <div>
         <label
           htmlFor="website-url"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-dark-700 mb-1"
         >
           Website URL
         </label>
-        <input
-          id="website-url"
-          type="url"
-          placeholder="https://example.com"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          className="form-input"
-          required
-        />
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-dark-400"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <input
+            id="website-url"
+            type="url"
+            placeholder="https://example.com"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            className="form-input pl-10 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm text-dark-700 border-dark-200 rounded-md"
+            required
+          />
+        </div>
       </div>
 
       <div>
         <div className="flex justify-between items-center mb-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-dark-700">
             CSS Selectors
           </label>
           <button
             type="button"
-            className="text-sm text-blue-600 hover:text-blue-800"
+            className="text-sm text-primary-600 hover:text-primary-800 flex items-center"
             onClick={handleAddSelector}
           >
-            + Add Selector
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-1"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            Add Selector
           </button>
         </div>
 
@@ -292,14 +328,27 @@ export default function GeneralScreenshots() {
                 placeholder={`CSS selector ${index + 1}`}
                 value={selectors[`selector-${index}`] || ""}
                 onChange={(e) => handleSelectorChange(index, e.target.value)}
-                className="form-input"
+                className="form-input block w-full shadow-sm text-dark-700 border-dark-200 rounded-md focus:ring-primary-500 focus:border-primary-500"
               />
               <button
                 type="button"
-                className="px-2 text-gray-500 hover:text-red-500"
+                className="p-2 text-dark-500 hover:text-secondary-500 hover:bg-secondary-50 rounded-md transition-colors"
                 onClick={() => handleRemoveSelector(index)}
               >
-                ×
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
               </button>
             </div>
           ))}
@@ -310,74 +359,206 @@ export default function GeneralScreenshots() {
         <div>
           <label
             htmlFor="viewport-width"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dark-700 mb-1"
           >
             Viewport Width (px)
           </label>
-          <input
-            id="viewport-width"
-            type="number"
-            min="320"
-            value={viewportWidth}
-            onChange={(e) => setViewportWidth(Number(e.target.value))}
-            className="form-input"
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-dark-400"
+              >
+                <path d="M21 3H3C1.89543 3 1 3.89543 1 5V19C1 20.1046 1.89543 21 3 21H21C22.1046 21 23 20.1046 23 19V5C23 3.89543 22.1046 3 21 3Z"></path>
+                <path d="M4 8h16"></path>
+              </svg>
+            </div>
+            <input
+              id="viewport-width"
+              type="number"
+              min="320"
+              value={viewportWidth}
+              onChange={(e) => setViewportWidth(Number(e.target.value))}
+              className="form-input pl-10 block w-full shadow-sm text-dark-700 border-dark-200 rounded-md focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
         </div>
 
         <div>
           <label
             htmlFor="viewport-height"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dark-700 mb-1"
           >
             Viewport Height (px)
           </label>
-          <input
-            id="viewport-height"
-            type="number"
-            min="320"
-            value={viewportHeight}
-            onChange={(e) => setViewportHeight(Number(e.target.value))}
-            className="form-input"
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-dark-400"
+              >
+                <path d="M21 3H3C1.89543 3 1 3.89543 1 5V19C1 20.1046 1.89543 21 3 21H21C22.1046 21 23 20.1046 23 19V5C23 3.89543 22.1046 3 21 3Z"></path>
+                <path d="M9 21V3"></path>
+              </svg>
+            </div>
+            <input
+              id="viewport-height"
+              type="number"
+              min="320"
+              value={viewportHeight}
+              onChange={(e) => setViewportHeight(Number(e.target.value))}
+              className="form-input pl-10 block w-full shadow-sm text-dark-700 border-dark-200 rounded-md focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
         </div>
 
         <div>
           <label
             htmlFor="wait-time"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-dark-700 mb-1"
           >
             Wait Time (ms)
           </label>
-          <input
-            id="wait-time"
-            type="number"
-            min="0"
-            step="100"
-            value={waitTime}
-            onChange={(e) => setWaitTime(Number(e.target.value))}
-            className="form-input"
-          />
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-dark-400"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <input
+              id="wait-time"
+              type="number"
+              min="0"
+              step="100"
+              value={waitTime}
+              onChange={(e) => setWaitTime(Number(e.target.value))}
+              className="form-input pl-10 block w-full shadow-sm text-dark-700 border-dark-200 rounded-md focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <button type="submit" className="btn btn-primary" disabled={isLoading}>
-          {isLoading ? "Capturing Screenshots..." : "Capture Screenshots"}
+        <button
+          type="submit"
+          className="btn btn-primary flex items-center gap-2"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <svg
+                className="animate-spin h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Capturing Screenshots...
+            </>
+          ) : (
+            <>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              Capture Screenshots
+            </>
+          )}
         </button>
 
         <button
           type="button"
-          className="btn btn-secondary"
+          className="btn btn-secondary flex items-center gap-2"
           onClick={() => setShowTester(true)}
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
           Test Selectors
         </button>
 
         <button
           type="button"
-          className="btn btn-secondary"
+          className="btn btn-secondary flex items-center gap-2"
           onClick={handleSaveConfig}
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
           Save Configuration
         </button>
 
@@ -558,18 +739,41 @@ export default function GeneralScreenshots() {
     return (
       <div className="mt-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold text-dark-800">
             Screenshot Results
           </h2>
-          <button onClick={handleExportToPDF} className="btn btn-primary">
-            Export to PDF
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleExportToPDF}
+              className="btn btn-primary flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"></path>
+                <path d="M9 17h6"></path>
+                <path d="M9 13h6"></path>
+              </svg>
+              Export to PDF
+            </button>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {screenshots.map((screenshot, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200"
+              className={`screenshot-item ${
+                screenshot.error ? "screenshot-error-item" : ""
+              }`}
             >
               {screenshot.error ? (
                 <div className="p-4">
@@ -584,57 +788,96 @@ export default function GeneralScreenshots() {
                     <img
                       src={screenshot.path}
                       alt={`Screenshot of ${screenshot.selector}`}
-                      className="w-full h-full object-contain"
+                      className="screenshot-image w-full h-full"
                     />
                   </div>
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-2">
-                      <div className="text-sm font-medium">
+                      <div className="text-sm font-medium text-dark-800">
                         {screenshot.selector}
                       </div>
                     </div>
                     {screenshot.url && (
-                      <p className="text-xs text-gray-500 mb-2 break-all">
+                      <p className="text-xs text-dark-500 mb-2 break-all">
                         {screenshot.url}
                       </p>
                     )}
                     <div className="flex justify-between items-center mb-2">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-dark-500">
                         Element: {Math.round(screenshot.width)}px ×{" "}
                         {Math.round(screenshot.height)}px
                       </p>
                       <a
                         href={screenshot.path}
                         download={`screenshot_${index}_${Date.now()}.png`}
-                        className="text-xs text-blue-600 hover:text-blue-800"
+                        className="text-xs text-primary-600 hover:text-primary-800 flex items-center gap-1"
                       >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="7 10 12 15 17 10"></polyline>
+                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
                         Download
                       </a>
                     </div>
 
                     {screenshot.images && screenshot.images.length > 0 && (
-                      <div className="mt-2 border-t pt-2">
-                        <p className="text-xs font-semibold text-gray-700 mb-1">
+                      <div className="mt-2 border-t border-dark-100 pt-2">
+                        <p className="text-xs font-semibold text-dark-700 mb-1">
                           Images found:
                         </p>
                         <div className="space-y-1">
                           {screenshot.images.map((img, idx) => (
-                            <div key={idx} className="text-xs text-gray-600">
+                            <div
+                              key={idx}
+                              className="text-xs text-dark-600 bg-dark-50 p-2 rounded-md"
+                            >
                               <p>
                                 Image #{idx + 1}: {img.renderedWidth}px ×{" "}
                                 {img.renderedHeight}px
                               </p>
-                              <p className="text-gray-500 text-xs">
+                              <p className="text-dark-500 text-xs">
                                 Natural: {img.naturalWidth}px ×{" "}
                                 {img.naturalHeight}px (Aspect ratio:{" "}
                                 {img.aspectRatio})
                               </p>
                               {(img.renderedWidth > img.naturalWidth ||
                                 img.renderedHeight > img.naturalHeight) && (
-                                <p className="text-orange-600 text-xs font-medium mt-1">
-                                  ⚠️ Warning: Image is stretched beyond its
-                                  natural size (Width: {img.widthScaling},
-                                  Height: {img.heightScaling})
+                                <p className="text-secondary-600 text-xs font-medium mt-1 flex items-center">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="12"
+                                    height="12"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="mr-1"
+                                  >
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line
+                                      x1="12"
+                                      y1="17"
+                                      x2="12.01"
+                                      y2="17"
+                                    ></line>
+                                  </svg>
+                                  Warning: Image is stretched beyond its natural
+                                  size (Width: {img.widthScaling}, Height:{" "}
+                                  {img.heightScaling})
                                 </p>
                               )}
                             </div>
@@ -659,24 +902,27 @@ export default function GeneralScreenshots() {
 
   return (
     <main>
-      <Header />
+      <DashboardHeader
+        title="General Screenshots"
+        subtitle="Capture screenshots of any elements on websites using CSS selectors"
+      />
 
-      <div className="bg-white shadow-sm rounded-lg p-6 mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          General Screenshot Tool
-        </h1>
-        <p className="text-gray-600 mb-6">
+      <div className="dashboard-card p-6 mb-8">
+        <h2 className="text-xl font-bold text-dark-800 mb-4">
+          General Screenshot Configuration
+        </h2>
+        <p className="text-dark-600 mb-6">
           Capture screenshots of any elements on websites using CSS selectors.
         </p>
 
         <Tabs tabs={tabs} defaultTab="single" onChange={setActiveTab} />
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+          <div className="bg-secondary-50 border-l-4 border-secondary-500 p-4 my-6 rounded-r-md">
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg
-                  className="h-5 w-5 text-red-500"
+                  className="h-5 w-5 text-secondary-500"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -689,7 +935,7 @@ export default function GeneralScreenshots() {
                 </svg>
               </div>
               <div className="ml-3">
-                <p className="text-red-700">{error}</p>
+                <p className="text-secondary-700">{error}</p>
               </div>
             </div>
           </div>
@@ -700,10 +946,54 @@ export default function GeneralScreenshots() {
         <div className="mt-6">
           <button
             onClick={handleExportToPDF}
-            className="btn btn-success"
+            className="btn btn-success flex items-center gap-2"
             disabled={isLoading}
           >
-            {isLoading ? "Generating PDF..." : "Export to PDF"}
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Generating PDF...
+              </>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                  <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <path d="M9 17h6"></path>
+                  <path d="M9 13h6"></path>
+                </svg>
+                Export to PDF
+              </>
+            )}
           </button>
         </div>
       </div>

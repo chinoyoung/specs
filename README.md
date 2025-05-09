@@ -33,6 +33,20 @@ A modern Next.js web application for capturing screenshots of specific elements 
 npm install
 ```
 
+3. Create a `.env.local` file in the root directory with your Firebase configuration:
+
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+> Note: You need to set up Firebase authentication with Email/Password and Google Sign-In methods enabled in the Firebase console. Also, ensure your Google Sign-In is configured to restrict to @goabroad.com domain.
+
 ### Running the Application
 
 To start the application:
@@ -77,6 +91,29 @@ This application is built using:
 - **Tailwind CSS**: For styling and responsive design
 - **Puppeteer**: For browser automation and screenshot capture
 - **React**: For building the user interface components
+- **Firebase**: For authentication and user management
+
+## Authentication
+
+The application uses Firebase Authentication to secure access to the screenshot tool. Only users with @goabroad.com email addresses are allowed to sign in.
+
+### Authentication Features
+
+- **Email/Password Authentication**: Create an account and sign in with your @goabroad.com email address
+- **Google Sign-In**: Sign in directly with your Google account (restricted to @goabroad.com domain)
+- **Domain Restriction**: Only allows users with @goabroad.com email addresses
+- **Protected Routes**: All application pages require authentication
+- **User Profile**: User information is displayed in the sidebar and header
+
+### Firebase Configuration
+
+To set up Firebase authentication:
+
+1. Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/)
+2. Enable Email/Password and Google authentication methods
+3. For Google authentication, configure domain restriction to goabroad.com
+4. Update your `.env.local` file with the Firebase project credentials
+5. Make sure to implement proper security rules in Firebase console
 
 ## Project Structure
 

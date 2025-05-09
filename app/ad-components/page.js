@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Header from "../../components/Header";
+import DashboardHeader from "../../components/DashboardHeader";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { takeScreenshots } from "../../utils/api";
 import { saveConfiguration, loadConfiguration } from "../../utils/storage";
@@ -587,14 +587,51 @@ export default function AdComponents() {
     return (
       <div className="mt-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold text-dark-800">
             Ad Screenshots
           </h2>
           <div className="flex gap-2">
-            <button onClick={handleDownloadAll} className="btn btn-secondary">
+            <button
+              onClick={handleDownloadAll}
+              className="btn btn-secondary flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
               Download All
             </button>
-            <button onClick={handleExportToPDF} className="btn btn-primary">
+            <button
+              onClick={handleExportToPDF}
+              className="btn btn-primary flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"></path>
+                <path d="M9 17h6"></path>
+                <path d="M9 13h6"></path>
+              </svg>
               Export to PDF
             </button>
           </div>
@@ -726,16 +763,18 @@ export default function AdComponents() {
       </div>
     );
   };
-
   return (
     <main>
-      <Header />
+      <DashboardHeader
+        title="Ad Component Screenshots"
+        subtitle="Capture screenshots of specific ad components on websites"
+      />
 
-      <div className="bg-white shadow-sm rounded-lg p-6 mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          Ad Component Screenshot Tool
-        </h1>
-        <p className="text-gray-600 mb-6">
+      <div className="dashboard-card p-6 mb-8">
+        <h2 className="text-xl font-bold text-dark-800 mb-4">
+          Ad Component Configuration
+        </h2>
+        <p className="text-dark-600 mb-6">
           Capture screenshots of ad components across different advertising
           specifications. Select an ad category or individually configure
           selectors for specific ad components.

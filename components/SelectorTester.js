@@ -39,55 +39,58 @@ export default function SelectorTester({ url, selectors, onClose }) {
   };
 
   return (
-    <div className="bg-white shadow-sm rounded-lg p-6 mb-8">
+    <div className="dashboard-card p-6 mb-8">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-medium text-gray-900">Test Selectors</h2>
+        <h2 className="text-lg font-semibold text-dark-800">Test Selectors</h2>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500"
+            className="text-dark-400 hover:text-dark-500 transition-colors p-1 rounded-full hover:bg-dark-100"
           >
             <span className="sr-only">Close</span>
             <svg
               className="h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <path
-                fillRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
         )}
       </div>
 
-      <p className="text-gray-600 mb-4">
+      <p className="text-dark-600 mb-4">
         Test your CSS selectors before taking screenshots to ensure they match
         the expected elements.
       </p>
 
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+        <div className="bg-secondary-50 border-l-4 border-secondary-500 p-4 mb-4 rounded-r-md">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg
-                className="h-5 w-5 text-red-500"
+                className="h-5 w-5 text-secondary-500"
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
             <div className="ml-3">
-              <p className="text-red-700">{error}</p>
+              <p className="text-secondary-700">{error}</p>
             </div>
           </div>
         </div>
@@ -96,11 +99,52 @@ export default function SelectorTester({ url, selectors, onClose }) {
       <div className="flex flex-wrap gap-3 mb-6">
         <button
           type="button"
-          className="btn btn-primary"
+          className="btn btn-primary flex items-center gap-2"
           onClick={handleTest}
           disabled={isLoading}
         >
-          {isLoading ? "Testing..." : "Test Selectors"}
+          {isLoading ? (
+            <>
+              <svg
+                className="animate-spin h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Testing...
+            </>
+          ) : (
+            <>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
+              Test Selectors
+            </>
+          )}
         </button>
       </div>
 
@@ -108,7 +152,7 @@ export default function SelectorTester({ url, selectors, onClose }) {
         <LoadingSpinner message="Testing selectors..." />
       ) : results ? (
         <div className="mt-4">
-          <h3 className="text-md font-medium text-gray-900 mb-3">Results:</h3>
+          <h3 className="text-md font-medium text-dark-800 mb-3">Results:</h3>
           <div className="space-y-4">
             {results.map((result, index) => (
               <div
@@ -116,44 +160,99 @@ export default function SelectorTester({ url, selectors, onClose }) {
                 className={`border rounded-md p-4 ${
                   result.exists && result.visibleCount > 0
                     ? "border-green-200 bg-green-50"
-                    : "border-yellow-200 bg-yellow-50"
+                    : "border-secondary-200 bg-secondary-50"
                 }`}
               >
                 <div className="flex flex-col md:flex-row md:justify-between mb-2">
-                  <p className="font-mono text-sm break-all">
+                  <p className="font-mono text-sm break-all text-dark-700">
                     {result.selector}
                   </p>
                   <p
                     className={`text-sm font-medium ${
                       result.exists && result.visibleCount > 0
                         ? "text-green-700"
-                        : "text-yellow-700"
-                    }`}
+                        : "text-secondary-700"
+                    } flex items-center`}
                   >
-                    {result.exists
-                      ? `Found ${result.count} elements, ${result.visibleCount} visible`
-                      : "No elements found"}
+                    {result.exists && result.visibleCount > 0 ? (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="mr-1"
+                        >
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Found {result.count} elements, {result.visibleCount}{" "}
+                        visible
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="mr-1"
+                        >
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="8" x2="12" y2="12"></line>
+                          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        No elements found
+                      </>
+                    )}
                   </p>
                 </div>
 
                 {result.exists &&
                   result.visibleCount > 0 &&
                   result.dimensions && (
-                    <p className="text-xs text-gray-500">
-                      First visible element size: {result.dimensions.width}px ×{" "}
-                      {result.dimensions.height}px
+                    <p className="text-xs text-dark-500 bg-dark-50 p-2 rounded-md mt-2">
+                      <span className="font-medium">
+                        First visible element size:
+                      </span>{" "}
+                      {result.dimensions.width}px × {result.dimensions.height}px
                     </p>
                   )}
 
                 {!result.exists && (
-                  <p className="text-sm text-yellow-700 mt-1">
+                  <p className="text-sm text-secondary-700 mt-2 bg-secondary-50 p-2 rounded-md">
                     Selector not found on page. Check for typos or try a
                     different selector.
                   </p>
                 )}
 
                 {result.exists && result.visibleCount === 0 && (
-                  <p className="text-sm text-yellow-700 mt-1">
+                  <p className="text-sm text-secondary-700 mt-2 bg-secondary-50 p-2 rounded-md flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-1"
+                    >
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
                     Elements found but none are visible. They might be hidden or
                     have zero dimensions.
                   </p>
