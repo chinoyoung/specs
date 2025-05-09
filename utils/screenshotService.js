@@ -166,7 +166,7 @@ export async function captureScreenshots(
                   renderedHeight: img.height,
                   naturalWidth: img.naturalWidth,
                   naturalHeight: img.naturalHeight,
-                  aspectRatio: (img.width / img.height).toFixed(2),
+                  aspectRatio: img.width / img.height,
                   widthScaling: `${widthScaling}%`,
                   heightScaling: `${heightScaling}%`,
                   isStretched:

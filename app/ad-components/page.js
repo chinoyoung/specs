@@ -501,15 +501,23 @@ export default function AdComponents() {
     if (!category) return null;
 
     return (
-      <div className="mt-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          {category.name}
-        </h3>
+      <div className="bg-white border border-gray-200 rounded-lg p-5 mt-4">
+        <div className="flex items-center mb-3">
+          <svg
+            className="w-5 h-5 text-blue-500 mr-2"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+          <h3 className="text-lg font-medium text-gray-900">{category.name}</h3>
+        </div>
 
-        <div className="mb-4">
+        <div className="mb-5 bg-gray-50 p-4 rounded-md">
           <label
             htmlFor={`category-url-${selectedCategory}`}
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-gray-700 mb-2"
           >
             Category URL
           </label>
@@ -532,26 +540,30 @@ export default function AdComponents() {
           </p>
         </div>
 
+        <h4 className="text-md font-medium text-gray-700 mb-3">
+          Ad Components
+        </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {category.ads.map((ad) => (
             <div
               key={ad.id}
-              className="border border-gray-200 rounded-lg p-4 bg-white"
+              className="border border-gray-200 rounded-lg p-4 bg-white hover:shadow-md transition-shadow duration-200"
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-3">
                 <label
                   htmlFor={`ad-${ad.id}`}
                   className="block font-medium text-gray-700"
                 >
-                  Ad {ad.id}: {ad.name}
+                  <span className="text-blue-600 font-bold">{ad.id}:</span>{" "}
+                  {ad.name}
                 </label>
               </div>
               <textarea
                 id={`ad-${ad.id}`}
                 value={adSelectors[ad.id] || ""}
                 onChange={(e) => handleSelectorChange(ad.id, e.target.value)}
-                placeholder="Enter CSS selector"
-                className="form-textarea text-sm"
+                placeholder="Enter CSS selector (e.g., .banner-container)"
+                className="form-textarea text-sm w-full"
                 rows="2"
               />
             </div>
@@ -585,12 +597,12 @@ export default function AdComponents() {
     }
 
     return (
-      <div className="mt-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-dark-800">
+      <div className="mt-8 bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 pb-4 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-dark-800 mb-4 md:mb-0">
             Ad Screenshots
           </h2>
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={handleDownloadAll}
               className="btn btn-secondary flex items-center gap-2"
@@ -605,6 +617,7 @@ export default function AdComponents() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="flex-shrink-0"
               >
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
@@ -626,6 +639,7 @@ export default function AdComponents() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="flex-shrink-0"
               >
                 <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
                 <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"></path>
@@ -640,13 +654,21 @@ export default function AdComponents() {
         {Object.entries(categorizedScreenshots).map(
           ([categoryName, screenshots]) => (
             <div key={categoryName} className="mb-8">
-              <div className="border-b border-gray-200 pb-2 mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
+              <div className="bg-gray-50 p-4 rounded-md mb-4">
+                <h3 className="text-lg font-medium text-gray-900 mb-1">
                   {categoryName}
                 </h3>
                 {categoryUrls[categoryName] && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    URL: {categoryUrls[categoryName]}
+                  <p className="text-sm text-gray-500">
+                    URL:{" "}
+                    <a
+                      href={categoryUrls[categoryName]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      {categoryUrls[categoryName]}
+                    </a>
                   </p>
                 )}
               </div>
@@ -654,15 +676,31 @@ export default function AdComponents() {
                 {Object.entries(screenshots).map(([adName, screenshot]) => (
                   <div
                     key={adName}
-                    className={`screenshot-item ${
-                      screenshot.error ? "screenshot-error-item" : ""
+                    className={`screenshot-item border border-gray-200 rounded-lg overflow-hidden ${
+                      screenshot.error
+                        ? "border-red-300 bg-red-50"
+                        : "bg-white hover:shadow-md transition-shadow"
                     }`}
                   >
                     {screenshot.error ? (
                       <div className="p-4">
                         <div className="screenshot-info">
-                          <div className="text-sm font-medium mb-2">
-                            {adName}
+                          <div className="flex items-center mb-2">
+                            <svg
+                              className="w-5 h-5 text-red-500 mr-2"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            <div className="text-sm font-medium text-red-700">
+                              {adName}
+                            </div>
                           </div>
                           <p className="text-red-600 text-sm">
                             Error: {screenshot.error}
@@ -671,7 +709,7 @@ export default function AdComponents() {
                           {screenshot.error.includes(
                             "does not exist on the page"
                           ) && (
-                            <div className="mt-3 bg-yellow-50 p-3 rounded text-xs">
+                            <div className="mt-3 bg-yellow-50 border border-yellow-100 p-3 rounded text-xs">
                               <p className="font-semibold mb-1">Suggestions:</p>
                               <ul className="list-disc pl-4 space-y-1">
                                 <li>Check for typos in your selector</li>
@@ -687,7 +725,7 @@ export default function AdComponents() {
                       </div>
                     ) : (
                       <>
-                        <div className="aspect-video relative overflow-hidden bg-gray-100">
+                        <div className="aspect-video relative overflow-hidden bg-gray-100 border-b">
                           <img
                             src={screenshot.path}
                             alt={`Screenshot of ${adName}`}
@@ -695,55 +733,116 @@ export default function AdComponents() {
                           />
                         </div>
                         <div className="p-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="text-sm font-medium">{adName}</div>
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="text-sm font-medium text-gray-800">
+                              <span className="text-blue-600 font-bold">
+                                {adName.split(":")[0].trim()}:
+                              </span>
+                              {adName.split(":")[1].trim()}
+                            </div>
                           </div>
-                          <div className="flex justify-between items-center mb-2">
-                            <p className="text-sm text-gray-500">
-                              Element: {Math.round(screenshot.width)}px ×{" "}
-                              {Math.round(screenshot.height)}px
-                            </p>
-                            <a
-                              href={screenshot.path}
-                              download={`${adName.replace(
-                                /[^a-zA-Z0-9]/g,
-                                "_"
-                              )}_${Date.now()}.png`}
-                              className="text-xs text-blue-600 hover:text-blue-800"
-                            >
-                              Download
-                            </a>
+                          <div className="flex flex-col gap-2">
+                            <div className="flex justify-between items-center py-1 px-2 bg-gray-50 rounded-md">
+                              <p className="text-xs text-gray-600">
+                                <span className="font-medium">Size:</span>{" "}
+                                {Math.round(screenshot.width)}px ×{" "}
+                                {Math.round(screenshot.height)}px
+                              </p>
+                              <a
+                                href={screenshot.path}
+                                download={`${adName.replace(
+                                  /[^a-zA-Z0-9]/g,
+                                  "_"
+                                )}_${Date.now()}.png`}
+                                className="text-xs text-blue-600 hover:text-blue-800 flex items-center"
+                              >
+                                <svg
+                                  className="w-3 h-3 mr-1"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                                Download
+                              </a>
+                            </div>
                           </div>
 
                           {screenshot.images &&
                             screenshot.images.length > 0 && (
-                              <div className="mt-2 border-t pt-2">
-                                <p className="text-xs font-semibold text-gray-700 mb-1">
-                                  Images found:
+                              <div className="mt-3 border-t border-gray-100 pt-3">
+                                <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+                                  <svg
+                                    className="w-4 h-4 mr-1 text-blue-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                  Images Found ({screenshot.images.length})
                                 </p>
-                                <div className="space-y-1">
+                                <div className="space-y-2">
                                   {screenshot.images.map((img, idx) => (
                                     <div
                                       key={idx}
-                                      className="text-xs text-gray-600"
+                                      className="text-xs bg-gray-50 p-2 rounded-md"
                                     >
-                                      <p>
-                                        Image #{idx + 1}: {img.renderedWidth}px
-                                        × {img.renderedHeight}px
-                                      </p>
-                                      <p className="text-gray-500 text-xs">
-                                        Natural: {img.naturalWidth}px ×{" "}
-                                        {img.naturalHeight}px (Aspect ratio:{" "}
-                                        {img.aspectRatio})
-                                      </p>
+                                      <div className="flex justify-between">
+                                        <p className="font-medium text-gray-700">
+                                          Image #{idx + 1}
+                                        </p>
+                                        <p className="text-gray-500">
+                                          Ratio:{" "}
+                                          {typeof img.aspectRatio === "number"
+                                            ? img.aspectRatio.toFixed(2)
+                                            : "Unknown"}
+                                        </p>
+                                      </div>
+                                      <div className="flex flex-col sm:flex-row sm:justify-between mt-1 text-gray-600">
+                                        <p>
+                                          Displayed: {img.renderedWidth}×
+                                          {img.renderedHeight}px
+                                        </p>
+                                        <p>
+                                          Natural: {img.naturalWidth}×
+                                          {img.naturalHeight}px
+                                        </p>
+                                      </div>
                                       {(img.renderedWidth > img.naturalWidth ||
                                         img.renderedHeight >
                                           img.naturalHeight) && (
-                                        <p className="text-orange-600 text-xs font-medium mt-1">
-                                          ⚠️ Warning: Image is stretched beyond
-                                          its natural size (Width:{" "}
-                                          {img.widthScaling}, Height:{" "}
-                                          {img.heightScaling})
+                                        <p className="text-orange-600 mt-1 flex items-center">
+                                          <svg
+                                            className="w-4 h-4 mr-1"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 20 20"
+                                            fill="currentColor"
+                                          >
+                                            <path
+                                              fillRule="evenodd"
+                                              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                              clipRule="evenodd"
+                                            />
+                                          </svg>
+                                          Image is stretched (Width:{" "}
+                                          {typeof img.widthScaling === "number"
+                                            ? img.widthScaling.toFixed(2)
+                                            : "Unknown"}
+                                          , Height:{" "}
+                                          {typeof img.heightScaling === "number"
+                                            ? img.heightScaling.toFixed(2)
+                                            : "Unknown"}
+                                          )
                                         </p>
                                       )}
                                     </div>
@@ -764,79 +863,114 @@ export default function AdComponents() {
     );
   };
   return (
-    <main>
+    <main className="max-w-7xl mx-auto">
       <DashboardHeader
         title="Ad Component Screenshots"
         subtitle="Capture screenshots of specific ad components on websites"
       />
 
-      <div className="dashboard-card p-6 mb-8">
-        <h2 className="text-xl font-bold text-dark-800 mb-4">
-          Ad Component Configuration
-        </h2>
-        <p className="text-dark-600 mb-6">
-          Capture screenshots of ad components across different advertising
-          specifications. Select an ad category or individually configure
-          selectors for specific ad components.
-        </p>
+      <div className="dashboard-card bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-8">
+        <div className="border-b border-gray-200 pb-4 mb-6">
+          <h2 className="text-xl font-bold text-dark-800">
+            Ad Component Configuration
+          </h2>
+          <p className="text-dark-600 mt-1">
+            Capture screenshots of ad components across different advertising
+            specifications. Select an ad category or individually configure
+            selectors for specific ad components.
+          </p>
+        </div>
 
         <form onSubmit={handleCaptureScreenshots} className="space-y-6">
-          <div>
-            <label
-              htmlFor="website-url"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Default URL
-            </label>
-            <input
-              id="website-url"
-              type="url"
-              placeholder="https://example.com"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              className="form-input"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Used when a category doesn't have a specific URL
-            </p>
-          </div>
+          {/* URL Configuration Section */}
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h3 className="text-md font-medium text-gray-800 mb-3">
+              URL Configuration
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="website-url"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Default URL
+                </label>
+                <input
+                  id="website-url"
+                  type="url"
+                  placeholder="https://example.com"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  className="form-input"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Used when a category doesn't have a specific URL
+                </p>
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ad Category
-            </label>
-            <select
-              value={selectedCategory || ""}
-              onChange={(e) => setSelectedCategory(e.target.value || null)}
-              className="form-input"
-            >
-              <option value="">Select a category (optional)</option>
-              {AD_CATEGORIES.map((category) => (
-                <option key={category.name} value={category.name}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ad Category
+                </label>
+                <select
+                  value={selectedCategory || ""}
+                  onChange={(e) => setSelectedCategory(e.target.value || null)}
+                  className="form-input"
+                >
+                  <option value="">Select a category (optional)</option>
+                  {AD_CATEGORIES.map((category) => (
+                    <option key={category.name} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Select a category to configure specific ad components
+                </p>
+              </div>
+            </div>
           </div>
 
           {!selectedCategory && (
-            <div className="mt-4 mb-2">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">
-                Category URLs
-              </h3>
-              <div className="grid grid-cols-1 gap-3 md:gap-4 bg-gray-50 p-3 rounded-lg">
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center mb-3">
+                <svg
+                  className="w-5 h-5 text-blue-500 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <h3 className="text-md font-medium text-gray-800">
+                  Category URLs
+                </h3>
+              </div>
+              <p className="text-sm text-gray-600 mb-3">
+                Set specific URLs for each category to capture screenshots from
+                different pages.
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {AD_CATEGORIES.map((category) => (
-                  <div key={category.name} className="flex flex-col">
+                  <div
+                    key={category.name}
+                    className="flex flex-col p-3 bg-gray-50 rounded-md"
+                  >
                     <label
                       htmlFor={`category-url-${category.name}`}
-                      className="block text-xs font-medium text-gray-700 mb-1"
+                      className="block text-sm font-medium text-gray-700 mb-1 truncate"
+                      title={category.name}
                     >
                       {category.name}
                     </label>
                     <input
                       id={`category-url-${category.name}`}
                       type="url"
-                      placeholder="https://example.com/category-specific-page"
+                      placeholder="https://example.com/category-page"
                       value={categoryUrls[category.name] || ""}
                       onChange={(e) => {
                         setCategoryUrls((prev) => ({
@@ -849,70 +983,102 @@ export default function AdComponents() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                You can set specific URLs for each category
-              </p>
             </div>
           )}
 
           {renderCategoryAds()}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label
-                htmlFor="viewport-width"
-                className="block text-sm font-medium text-gray-700 mb-1"
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center mb-3">
+              <svg
+                className="w-5 h-5 text-blue-500 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
               >
-                Viewport Width (px)
-              </label>
-              <input
-                id="viewport-width"
-                type="number"
-                min="320"
-                value={viewportWidth}
-                onChange={(e) => setViewportWidth(Number(e.target.value))}
-                className="form-input"
-              />
+                <path
+                  fillRule="evenodd"
+                  d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm1 0v12h12V4H4z"
+                  clipRule="evenodd"
+                />
+                <path d="M13 8V6H7v2h6z" />
+              </svg>
+              <h3 className="text-md font-medium text-gray-800">
+                Viewport Settings
+              </h3>
             </div>
+            <p className="text-sm text-gray-600 mb-3">
+              Configure screenshot dimensions and timing parameters.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gray-50 p-3 rounded-md">
+                <label
+                  htmlFor="viewport-width"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Viewport Width (px)
+                </label>
+                <div className="flex items-center">
+                  <input
+                    id="viewport-width"
+                    type="number"
+                    min="320"
+                    value={viewportWidth}
+                    onChange={(e) => setViewportWidth(Number(e.target.value))}
+                    className="form-input"
+                  />
+                  <span className="text-sm text-gray-500 ml-2">px</span>
+                </div>
+              </div>
 
-            <div>
-              <label
-                htmlFor="viewport-height"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Viewport Height (px)
-              </label>
-              <input
-                id="viewport-height"
-                type="number"
-                min="320"
-                value={viewportHeight}
-                onChange={(e) => setViewportHeight(Number(e.target.value))}
-                className="form-input"
-              />
-            </div>
+              <div className="bg-gray-50 p-3 rounded-md">
+                <label
+                  htmlFor="viewport-height"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Viewport Height (px)
+                </label>
+                <div className="flex items-center">
+                  <input
+                    id="viewport-height"
+                    type="number"
+                    min="320"
+                    value={viewportHeight}
+                    onChange={(e) => setViewportHeight(Number(e.target.value))}
+                    className="form-input"
+                  />
+                  <span className="text-sm text-gray-500 ml-2">px</span>
+                </div>
+              </div>
 
-            <div>
-              <label
-                htmlFor="wait-time"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Wait Time (ms)
-              </label>
-              <input
-                id="wait-time"
-                type="number"
-                min="0"
-                step="100"
-                value={waitTime}
-                onChange={(e) => setWaitTime(Number(e.target.value))}
-                className="form-input"
-              />
+              <div className="bg-gray-50 p-3 rounded-md">
+                <label
+                  htmlFor="wait-time"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Wait Time (ms)
+                </label>
+                <div className="flex items-center">
+                  <input
+                    id="wait-time"
+                    type="number"
+                    min="0"
+                    step="100"
+                    value={waitTime}
+                    onChange={(e) => setWaitTime(Number(e.target.value))}
+                    className="form-input"
+                  />
+                  <span className="text-sm text-gray-500 ml-2">ms</span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Time to wait for dynamic content to load
+                </p>
+              </div>
             </div>
           </div>
 
           {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4">
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 my-4 rounded-r-md">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
@@ -935,39 +1101,90 @@ export default function AdComponents() {
             </div>
           )}
 
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isLoading}
-            >
-              {isLoading
-                ? "Capturing Screenshots..."
-                : "Capture Selected Screenshots"}
-            </button>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="mb-4 md:mb-0">
+                <h3 className="text-md font-medium text-gray-800 mb-1">
+                  Actions
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Capture screenshots, save or load your configuration
+                </p>
+              </div>
 
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleSaveConfig}
-            >
-              Save Configuration
-            </button>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  className="btn btn-primary flex items-center"
+                  disabled={isLoading}
+                >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {isLoading
+                    ? "Capturing Screenshots..."
+                    : "Capture Selected Screenshots"}
+                </button>
 
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleLoadConfig}
-            >
-              Load Configuration
-            </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary flex items-center"
+                  onClick={handleSaveConfig}
+                >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm12 0H5v10h10V5z"
+                      clipRule="evenodd"
+                    />
+                    <path d="M4 4a1 1 0 011-1h4a1 1 0 010 2H5a1 1 0 01-1-1z" />
+                  </svg>
+                  Save Configuration
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-secondary flex items-center"
+                  onClick={handleLoadConfig}
+                >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Load Configuration
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-5">
             <div className="flex items-center mb-3">
-              <div className="w-5 h-5 mr-2 text-blue-500">
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500 mr-3">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -980,19 +1197,30 @@ export default function AdComponents() {
                   />
                 </svg>
               </div>
-              <h3 className="text-md font-medium">Batch Processing</h3>
+              <h3 className="text-lg font-medium text-blue-800">
+                Batch Processing
+              </h3>
             </div>
-            <p className="text-sm text-gray-600 mb-3">
+            <p className="text-sm text-blue-600 mb-4">
               Capture screenshots of all configured ad components across all
               categories at once. Make sure you've set up selectors and URLs for
               each category you want to capture.
             </p>
             <button
               type="button"
-              className="btn btn-primary w-full md:w-auto"
+              className="btn bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto flex items-center justify-center"
               onClick={handleCaptureAllScreenshots}
               disabled={isLoading}
             >
+              <svg
+                className="w-4 h-4 mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+                <path d="M9 13h2v5a1 1 0 11-2 0v-5z" />
+              </svg>
               {isLoading
                 ? "Capturing All Screenshots..."
                 : "Capture All Configured Ads"}
@@ -1002,7 +1230,9 @@ export default function AdComponents() {
       </div>
 
       {isLoading ? (
-        <LoadingSpinner message="Taking screenshots..." />
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-10 text-center">
+          <LoadingSpinner message="Taking screenshots..." />
+        </div>
       ) : (
         renderScreenshotsByCategory()
       )}
