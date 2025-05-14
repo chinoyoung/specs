@@ -38,18 +38,7 @@ export default function DashboardHeader() {
 
   return (
     <header className="bg-white shadow-sm fixed top-0 right-0 left-0 z-30 md:left-64 h-16">
-      <div className="flex items-center justify-between h-full px-4 md:px-6">
-        <div className="flex-1">
-          <Link href="/" className="md:hidden">
-            <Image
-              src="/logo.png"
-              alt="GoShotBroad Logo"
-              width={96}
-              height={32}
-              className="h-8 w-auto"
-            />
-          </Link>
-        </div>
+      <div className="flex items-center justify-end h-full px-4 md:px-6">
         <div className="flex items-center space-x-4">
           <div className="relative">
             <button

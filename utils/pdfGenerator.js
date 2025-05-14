@@ -24,11 +24,25 @@ export const generatePDF = async (data, title = "Screenshot Report") => {
     creator: "Screenshot Tool",
   });
 
-  // Add title
-  doc.setFontSize(20);
-  doc.text(title, 15, 15);
+  // Define colors for a more modern look
+  const colors = {
+    primary: [41, 98, 255], // #2962FF - for main headings
+    secondary: [45, 55, 72], // #2D3748 - for subheadings (slate-800)
+    text: [74, 85, 104], // #4A5568 - for regular text (slate-600)
+    success: [56, 161, 105], // #38A169 - for success indicators
+    warning: [221, 107, 32], // #DD6B20 - for warnings
+    lightGray: [237, 242, 247], // #EDF2F7 - for backgrounds (slate-100)
+  };
 
-  // Add date
+  // Add a header with background
+  doc.setFillColor(...colors.lightGray);
+  doc.rect(0, 0, 210, 30, "F");
+
+  // Add title
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...colors.primary);
+  doc.setFontSize(24);
+  doc.text(title, 15, 15);
   doc.setFontSize(10);
   doc.text(`Generated on: ${new Date().toLocaleString()}`, 15, 22);
 
@@ -40,21 +54,34 @@ export const generatePDF = async (data, title = "Screenshot Report") => {
     // Add page break if needed (except for first category)
     if (categoryIndex > 0 && yPos > 240) {
       doc.addPage();
-      yPos = 15;
+
+      // Add subtle header to new page
+      doc.setFillColor(...colors.lightGray);
+      doc.rect(0, 0, 210, 15, "F");
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...colors.secondary);
+      doc.setFontSize(10);
+      doc.text(`${title} (continued)`, 15, 10);
+
+      yPos = 25;
     }
 
-    // Add category header
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
+    // Add category header with background
+    doc.setFillColor(...colors.lightGray);
+    doc.roundedRect(10, yPos - 5, 190, 10, 2, 2, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...colors.secondary);
+    doc.setFontSize(14);
     doc.text(categoryName, 15, yPos);
-    yPos += 8;
+    yPos += 10;
 
     // Add URL if available
     if (data.categoryUrls && data.categoryUrls[categoryName]) {
-      doc.setFontSize(10);
-      doc.setTextColor(100, 100, 100);
+      doc.setFont("helvetica", "italic");
+      doc.setTextColor(...colors.text);
+      doc.setFontSize(9);
       doc.text(`URL: ${data.categoryUrls[categoryName]}`, 15, yPos);
-      yPos += 6;
+      yPos += 8;
     }
 
     // Process each screenshot in this category
@@ -62,60 +89,96 @@ export const generatePDF = async (data, title = "Screenshot Report") => {
       // Check if we need a new page
       if (yPos > 240) {
         doc.addPage();
-        yPos = 15;
+
+        // Add subtle header to new page
+        doc.setFillColor(...colors.lightGray);
+        doc.rect(0, 0, 210, 15, "F");
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(...colors.secondary);
+        doc.setFontSize(10);
+        doc.text(`${title} (continued)`, 15, 10);
+
+        yPos = 25;
       }
 
-      // Add screenshot info
+      // Add screenshot info with card-like appearance
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(230, 230, 230);
+      doc.roundedRect(10, yPos - 5, 190, 8, 1, 1, "FD");
+
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...colors.secondary);
       doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
       doc.text(adName, 15, yPos);
       yPos += 6;
 
       if (screenshot.error) {
-        // Handle error case
-        doc.setTextColor(200, 0, 0);
+        // Handle error case with a nice error box
+        doc.setFillColor(254, 226, 226); // Light red background
+        doc.setDrawColor(252, 129, 129); // Red border
+        doc.roundedRect(15, yPos, 180, 10, 2, 2, "FD");
+
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(197, 48, 48); // Red text
         doc.setFontSize(10);
-        doc.text(`Error: ${screenshot.error}`, 15, yPos);
-        yPos += 8;
+        doc.text(`Error: ${screenshot.error}`, 20, yPos + 6);
+        yPos += 15;
       } else {
         // Add screenshot image
         try {
           // Only add if it's a browser environment
           if (typeof window !== "undefined") {
-            doc.addImage(
-              screenshot.path,
-              "PNG",
-              15,
-              yPos,
-              Math.min(180, screenshot.width / 4),
-              Math.min(100, screenshot.height / 4)
+            // Add a subtle background for the image
+            const imgWidth = Math.min(180, screenshot.width / 4);
+            const imgHeight = Math.min(100, screenshot.height / 4);
+
+            doc.setFillColor(250, 250, 250);
+            doc.setDrawColor(230, 230, 230);
+            doc.roundedRect(
+              14,
+              yPos - 1,
+              imgWidth + 2,
+              imgHeight + 2,
+              2,
+              2,
+              "FD"
             );
 
+            doc.addImage(screenshot.path, "PNG", 15, yPos, imgWidth, imgHeight);
+
             // Update yPos based on image height
-            yPos += Math.min(100, screenshot.height / 4) + 5;
+            yPos += imgHeight + 8;
           }
         } catch (e) {
           console.error("Failed to add image to PDF:", e);
+          doc.setFont("helvetica", "italic");
+          doc.setTextColor(...colors.warning);
           doc.text("Image could not be loaded", 15, yPos);
           yPos += 8;
         }
 
-        // Add dimensions
-        doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
+        // Add dimensions with badge-like appearance
+        doc.setFillColor(245, 250, 255); // Light blue background
+        doc.setDrawColor(235, 240, 245); // Blue border
+        doc.roundedRect(15, yPos - 5, 85, 8, 2, 2, "FD");
+
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(...colors.text);
+        doc.setFontSize(9);
         doc.text(
           `Dimensions: ${Math.round(screenshot.width)}px × ${Math.round(
             screenshot.height
           )}px`,
-          15,
+          18,
           yPos
         );
         yPos += 6;
 
         // Add image information
         if (screenshot.images && screenshot.images.length > 0) {
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(...colors.secondary);
           doc.setFontSize(10);
-          doc.setTextColor(0, 0, 0);
           doc.text("Images found:", 15, yPos);
           yPos += 6;
 
@@ -161,19 +224,38 @@ export const generatePDF = async (data, title = "Screenshot Report") => {
             ],
             body: tableData,
             theme: "grid",
-            styles: { fontSize: 8, cellPadding: 1 },
-            headStyles: { fillColor: [220, 220, 220], textColor: [0, 0, 0] },
+            styles: {
+              fontSize: 8,
+              cellPadding: 2,
+              font: "helvetica",
+              lineColor: [230, 230, 230],
+              lineWidth: 0.1,
+            },
+            headStyles: {
+              fillColor: [...colors.lightGray],
+              textColor: [...colors.secondary],
+              fontStyle: "bold",
+              halign: "center",
+            },
             columnStyles: {
+              0: { fontStyle: "bold" },
               4: {
                 fillColor: (data, row) => {
-                  return data === "OK" ? [255, 255, 255] : [255, 240, 230];
+                  return data === "OK" ? [240, 255, 244] : [255, 245, 230];
                 },
                 textColor: (data, row) => {
-                  return data === "OK" ? [0, 150, 0] : [200, 80, 0];
+                  return data === "OK"
+                    ? [...colors.success]
+                    : [...colors.warning];
                 },
+                fontStyle: "bold",
+                halign: "center",
               },
             },
             margin: { left: 15, right: 15 },
+            alternateRowStyles: {
+              fillColor: [250, 250, 250],
+            },
           });
 
           // Update Y position after table
@@ -181,12 +263,31 @@ export const generatePDF = async (data, title = "Screenshot Report") => {
         }
       }
 
-      // Add separator
-      doc.setDrawColor(200, 200, 200);
-      doc.line(15, yPos - 5, 195, yPos - 5);
-      yPos += 10;
+      // Add a more visually appealing separator
+      doc.setFillColor(248, 250, 252);
+      doc.rect(15, yPos - 2, 180, 0.5, "F");
+      yPos += 12;
     });
   });
+
+  // Add footer to each page
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+
+    // Add footer with line
+    doc.setDrawColor(230, 230, 230);
+    doc.line(15, 285, 195, 285);
+
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(8);
+    doc.setTextColor(...colors.text);
+    doc.text("Generated by GoShotBroad Screenshot Tool", 15, 290);
+
+    // Add page numbers
+    doc.setFont("helvetica", "normal");
+    doc.text(`Page ${i} of ${pageCount}`, 195, 290, null, null, "right");
+  }
 
   return doc;
 };

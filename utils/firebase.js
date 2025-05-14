@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { checkFirebaseConfig } from "./configHelper";
 
 // Check Firebase configuration
@@ -25,6 +26,7 @@ const firebaseConfig = {
 let app;
 let auth;
 let googleProvider;
+let db;
 
 try {
   // Check if required Firebase config values are present
@@ -49,6 +51,7 @@ try {
 
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
+  db = getFirestore(app);
   googleProvider = new GoogleAuthProvider();
 
   // Configure Google Auth Provider
@@ -74,7 +77,8 @@ try {
     signOut: () => Promise.reject(new Error("Firebase not initialized")),
   };
   googleProvider = {};
+  db = {};
 }
 
-export { auth, googleProvider };
+export { auth, googleProvider, db };
 export default app;

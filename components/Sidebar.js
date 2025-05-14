@@ -11,13 +11,9 @@ import {
   FiInfo,
   FiMenu,
   FiX,
-  FiSettings,
-  FiDownload,
   FiLogOut,
-  FiUser,
 } from "react-icons/fi";
 import { useAuth } from "../utils/authContext";
-import { getProfileImageUrl, profileImageLoader } from "../utils/profileImage";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -99,13 +95,13 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 bg-white shadow-lg transform transition-transform duration-300 ease-in-out 
+        className={`fixed inset-y-0 left-0 z-40 bg-slate-900 shadow-lg transform transition-transform duration-300 ease-in-out 
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} 
         md:translate-x-0 md:w-64`}
       >
         <div className="h-full flex flex-col">
           {/* Sidebar header */}
-          <div className="flex items-center justify-between px-4 h-16 border-b border-dark-100">
+          <div className="flex items-center justify-center px-4 h-16 border-b border-slate-800">
             <Link href="/" className="flex items-center">
               {!isSidebarCollapsed && (
                 <div className="flex items-center">
@@ -128,13 +124,6 @@ export default function Sidebar() {
                 />
               )}
             </Link>
-
-            <button
-              onClick={() => setSidebarCollapsed(!isSidebarCollapsed)}
-              className="hidden md:block p-2 rounded-md text-dark-400 hover:bg-primary-50"
-            >
-              <FiMenu className="h-5 w-5" />
-            </button>
           </div>
 
           {/* Navigation */}
@@ -144,16 +133,16 @@ export default function Sidebar() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className={`flex items-center p-3 rounded-md transition-colors duration-200 ${
+                    className={`flex items-center p-3 font-bold text-xs rounded-md transition-colors duration-200 ${
                       isActive(item.href)
-                        ? "bg-primary-50 text-primary-700"
-                        : "text-dark-600 hover:bg-primary-50 hover:text-primary-700"
+                        ? "bg-slate-700 text-slate-100"
+                        : "text-dark-600 hover:bg-slate-700 hover:text-slate-100"
                     }`}
                   >
                     <item.icon
-                      className={`h-5 w-5 ${
+                      className={`h-4 w-4 ${
                         isActive(item.href)
-                          ? "text-primary-700"
+                          ? "text-slate-400"
                           : "text-dark-500"
                       }`}
                     />
@@ -167,15 +156,17 @@ export default function Sidebar() {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-dark-100">
+          <div className="p-4 border-t border-slate-800">
             <div className="flex flex-col space-y-2">
               {user && (
                 <button
                   onClick={handleLogout}
-                  className="flex items-center p-2 text-dark-600 hover:bg-primary-50 hover:text-primary-700 rounded-md"
+                  className="flex items-center p-2 text-dark-600 hover:bg-red-400 hover:text-slate-100 rounded-md"
                 >
-                  <FiLogOut className="h-5 w-5" />
-                  {!isSidebarCollapsed && <span className="ml-3">Logout</span>}
+                  <FiLogOut className="h-4 w-4" />
+                  {!isSidebarCollapsed && (
+                    <span className="ml-3 font-bold text-xs">Logout</span>
+                  )}
                 </button>
               )}
             </div>
