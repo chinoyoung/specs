@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import DashboardHeader from "../../components/DashboardHeader";
+import Protected from "../../components/Protected";
+import PageHeader from "../../components/PageHeader";
 import Tabs from "../../components/Tabs";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import SelectorTester from "../../components/SelectorTester";
@@ -911,8 +912,8 @@ export default function GeneralScreenshots() {
   ];
 
   return (
-    <main>
-      <DashboardHeader
+    <Protected>
+      <PageHeader
         title="General Screenshots"
         subtitle="Capture screenshots of any elements on websites using CSS selectors"
       />
@@ -1027,6 +1028,6 @@ export default function GeneralScreenshots() {
       ) : (
         renderScreenshots()
       )}
-    </main>
+    </Protected>
   );
 }

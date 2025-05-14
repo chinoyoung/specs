@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import DashboardHeader from "../../components/DashboardHeader";
+import Protected from "../../components/Protected";
+import PageHeader from "../../components/PageHeader";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { takeScreenshots } from "../../utils/api";
 import { saveConfiguration, loadConfiguration } from "../../utils/storage";
@@ -863,8 +864,8 @@ export default function AdComponents() {
     );
   };
   return (
-    <main className="max-w-7xl mx-auto">
-      <DashboardHeader
+    <Protected>
+      <PageHeader
         title="Ad Component Screenshots"
         subtitle="Capture screenshots of specific ad components on websites"
       />
@@ -1236,6 +1237,6 @@ export default function AdComponents() {
       ) : (
         renderScreenshotsByCategory()
       )}
-    </main>
+    </Protected>
   );
 }

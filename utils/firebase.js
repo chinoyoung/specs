@@ -27,6 +27,26 @@ let auth;
 let googleProvider;
 
 try {
+  // Check if required Firebase config values are present
+  const requiredConfigs = [
+    "apiKey",
+    "authDomain",
+    "projectId",
+    "storageBucket",
+    "messagingSenderId",
+    "appId",
+  ];
+
+  const missingConfigs = requiredConfigs.filter((key) => !firebaseConfig[key]);
+
+  if (missingConfigs.length > 0) {
+    throw new Error(
+      `Missing required Firebase config: ${missingConfigs.join(
+        ", "
+      )}. Please check your .env.local file.`
+    );
+  }
+
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   googleProvider = new GoogleAuthProvider();

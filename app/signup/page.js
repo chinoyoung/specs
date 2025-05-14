@@ -15,7 +15,7 @@ export default function SignUp() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [validationError, setValidationError] = useState("");
   const router = useRouter();
-  const { signup, loginWithGoogle, error } = useAuth();
+  const { signup, loginWithGoogle, error, isFirebaseConfigured } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,10 +152,20 @@ export default function SignUp() {
             </div>
           )}
 
+          {!isFirebaseConfigured && (
+            <div className="flex items-center text-red-600 bg-red-50 p-3 rounded-md">
+              <FiAlertCircle className="h-5 w-5 mr-2" />
+              <span className="text-sm">
+                Firebase is not properly configured. Please check your
+                environment variables in .env.local file.
+              </span>
+            </div>
+          )}
+
           <div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !isFirebaseConfigured}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-300"
             >
               {isLoading ? "Creating account..." : "Create Account"}
@@ -177,7 +187,7 @@ export default function SignUp() {
             <button
               type="button"
               onClick={handleGoogleSignIn}
-              disabled={isGoogleLoading}
+              disabled={isGoogleLoading || !isFirebaseConfigured}
               className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-dark-300 rounded-md shadow-sm bg-white text-sm font-medium text-dark-700 hover:bg-dark-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-70"
             >
               <FcGoogle className="h-5 w-5" />

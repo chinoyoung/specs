@@ -101,7 +101,7 @@ export default function Sidebar() {
       <aside
         className={`fixed inset-y-0 left-0 z-40 bg-white shadow-lg transform transition-transform duration-300 ease-in-out 
         ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} 
-        md:translate-x-0 md:w-${isSidebarCollapsed ? "20" : "64"}`}
+        md:translate-x-0 md:w-64`}
       >
         <div className="h-full flex flex-col">
           {/* Sidebar header */}
@@ -133,11 +133,7 @@ export default function Sidebar() {
               onClick={() => setSidebarCollapsed(!isSidebarCollapsed)}
               className="hidden md:block p-2 rounded-md text-dark-400 hover:bg-primary-50"
             >
-              {isSidebarCollapsed ? (
-                <FiMenu className="h-5 w-5" />
-              ) : (
-                <FiMenu className="h-5 w-5" />
-              )}
+              <FiMenu className="h-5 w-5" />
             </button>
           </div>
 
@@ -172,31 +168,6 @@ export default function Sidebar() {
 
           {/* Footer */}
           <div className="p-4 border-t border-dark-100">
-            {user && (
-              <div className="mb-4 flex items-center">
-                <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                  <Image
-                    src={getProfileImageUrl(user, 32)}
-                    alt={getUserName(user.email)}
-                    width={32}
-                    height={32}
-                    loader={profileImageLoader}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                {!isSidebarCollapsed && (
-                  <div className="overflow-hidden">
-                    <div className="text-sm font-medium text-dark-800 truncate">
-                      {getUserName(user.email)}
-                    </div>
-                    <div className="text-xs text-dark-500">
-                      GoAbroad Employee
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
             <div className="flex flex-col space-y-2">
               {user && (
                 <button
@@ -207,17 +178,6 @@ export default function Sidebar() {
                   {!isSidebarCollapsed && <span className="ml-3">Logout</span>}
                 </button>
               )}
-
-              <div className="flex items-center p-2">
-                {!isSidebarCollapsed && (
-                  <span className="ml-3 text-dark-600">
-                    © 2025{" "}
-                    <span className="font-semibold text-primary-700">
-                      GoShotBroad
-                    </span>
-                  </span>
-                )}
-              </div>
             </div>
           </div>
         </div>

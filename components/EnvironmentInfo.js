@@ -20,12 +20,24 @@ export default function EnvironmentInfo() {
     <div className="fixed bottom-4 right-4 z-50">
       <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden max-w-md">
         <div
-          className="flex items-center justify-between p-3 bg-gray-50 cursor-pointer"
+          className={`flex items-center justify-between p-3 cursor-pointer ${
+            !firebaseConfig.isConfigured ? "bg-red-100" : "bg-gray-50"
+          }`}
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <div className="flex items-center">
-            <FiInfo className="text-primary-500 mr-2" />
-            <span className="text-sm font-medium">Environment Info</span>
+            <FiInfo
+              className={`mr-2 ${
+                !firebaseConfig.isConfigured
+                  ? "text-red-500"
+                  : "text-primary-500"
+              }`}
+            />
+            <span className="text-sm font-medium">
+              {!firebaseConfig.isConfigured
+                ? "Firebase Configuration Error"
+                : "Environment Info"}
+            </span>
           </div>
           {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
         </div>

@@ -20,6 +20,25 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isFirebaseConfigured, setIsFirebaseConfigured] = useState(true);
+
+  // Check if Firebase is properly configured
+  useEffect(() => {
+    try {
+      // If auth doesn't have the expected methods, it means Firebase isn't properly configured
+      if (!auth.currentUser && typeof auth.onAuthStateChanged !== "function") {
+        setIsFirebaseConfigured(false);
+        setError(
+          "Firebase is not properly configured. Please check your environment variables."
+        );
+        setLoading(false);
+      }
+    } catch (err) {
+      setIsFirebaseConfigured(false);
+      setError("Firebase initialization error: " + err.message);
+      setLoading(false);
+    }
+  }, []);
 
   // Check if email is from goabroad.com domain
   const isGoAbroadEmail = (email) => {
@@ -29,6 +48,14 @@ export const AuthContextProvider = ({ children }) => {
   // Register with email and password
   const signup = async (email, password) => {
     setError("");
+
+    if (!isFirebaseConfigured) {
+      setError(
+        "Firebase is not properly configured. Please check your environment variables."
+      );
+      return false;
+    }
+
     if (!isGoAbroadEmail(email)) {
       setError("Only @goabroad.com email addresses are allowed");
       return false;
@@ -50,6 +77,14 @@ export const AuthContextProvider = ({ children }) => {
   // Login with email and password
   const login = async (email, password) => {
     setError("");
+
+    if (!isFirebaseConfigured) {
+      setError(
+        "Firebase is not properly configured. Please check your environment variables."
+      );
+      return false;
+    }
+
     if (!isGoAbroadEmail(email)) {
       setError("Only @goabroad.com email addresses are allowed");
       return false;
@@ -67,6 +102,14 @@ export const AuthContextProvider = ({ children }) => {
   // Login with Google
   const loginWithGoogle = async () => {
     setError("");
+
+    if (!isFirebaseConfigured) {
+      setError(
+        "Firebase is not properly configured. Please check your environment variables."
+      );
+      return false;
+    }
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -114,6 +157,11 @@ export const AuthContextProvider = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
+    // Skip the auth state listener if Firebase is not configured
+    if (!isFirebaseConfigured) {
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
@@ -125,12 +173,21 @@ export const AuthContextProvider = ({ children }) => {
       setLoading(false);
     });
 
-    return () => unsubscribe();
-  }, []);
+    return () => unsubscribe && unsubscribe();
+  }, [isFirebaseConfigured]);
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, error, signup, login, loginWithGoogle, logout }}
+      value={{
+        user,
+        loading,
+        error,
+        isFirebaseConfigured,
+        signup,
+        login,
+        loginWithGoogle,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>
